@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-wdb
+qwdb
 """
 import sys
 
 from setuptools import setup
 
-__version__ = '3.3.0'
+__version__ = '3.3.1'
 
 requires = [
     "log_colorizer>=1.8.3",
@@ -23,7 +23,7 @@ else:
     requires.append('importmagic3')
 
 options = dict(
-    name="wdb",
+    name="qwdb",
     version=__version__,
     description="An improbable web debugger through WebSockets (client only)",
     long_description="See http://github.com/Kozea/wdb",

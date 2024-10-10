@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-wdb.server
+qwdb.server
 """
 import sys
 
 from setuptools import setup
 
-__version__ = '3.3.0'
+__version__ = '3.3.1'
 
 requires = [
-    "wdb==%s" % __version__,
-    "tornado>=5.0, <6.0",
+    "qwdb==%s" % __version__,
+    "tornado>=5.0",
     "psutil>=2.1",
     'tornado_systemd',
 ]
@@ -22,7 +22,7 @@ options = dict(
     name="wdb.server",
     version=__version__,
     description="An improbable web debugger through WebSockets (server)",
-    long_description="See http://github.com/Kozea/wdb",
+    long_description="See http://github.com/quilsoft-org/wdb",
     author="Florian Mounier @ kozea",
     author_email="florian.mounier@kozea.fr",
     url="http://github.com/Kozea/wdb",
