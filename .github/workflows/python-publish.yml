@@ -42,12 +42,9 @@ jobs:
         python -m build
 
     - name: Publish Server package
-      uses: pypa/gh-action-pypi-publish@v1.10.3
-      with:
-        user: __token__
-        password: ${{ secrets.APITOKENWDB }}
-        packages-dir: server/
-      working-directory: server
+      run: |
+        cd server
+        python -m twine upload dist/* --username __token__ --password ${{ secrets.APITOKENWDB }}
 
    # Build and publish the client package
     - name: Set up Python for Client
@@ -67,8 +64,7 @@ jobs:
         python -m build
 
     - name: Publish Client package
-      uses: pypa/gh-action-pypi-publish@v1.10.3
-      with:
-        user: __token__
-        password: ${{ secrets.APITOKENWDB }}
-      working-directory: client
+      run: |
+        cd client
+        python -m twine upload dist/* --username __token__ --password ${{ secrets.APITOKENWDB }}
+    
