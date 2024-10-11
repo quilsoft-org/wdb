@@ -19,7 +19,7 @@ if sys.platform == 'linux':
     requires.append('pyinotify')
 
 options = dict(
-    name="wdb.server",
+    name="qwdb.server",
     version=__version__,
     description="An improbable web debugger through WebSockets (server)",
     long_description="See http://github.com/quilsoft-org/wdb",
