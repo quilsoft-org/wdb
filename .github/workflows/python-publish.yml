@@ -46,7 +46,7 @@ jobs:
       with:
         user: __token__
         password: ${{ secrets.APITOKENWDB }}
-        working-directory: server
+        packages-dir: server/
 
    # Build and publish the client package
     - name: Set up Python for Client
@@ -70,4 +70,4 @@ jobs:
       with:
         user: __token__
         password: ${{ secrets.APITOKENWDB }}
-        working-directory: client
+        packages-dir: server/
