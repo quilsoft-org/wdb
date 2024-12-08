@@ -7,64 +7,47 @@
 # documentation.
 
 name: Uploading Python Package
-run-name: ${{ github.actor }} is Uploading Python Package
+run-name: ${{ github.actor }} is Publishing to Pypi
 
 on:
   workflow_dispatch: # Se dispara manualmente
-  release:
-    types: [published]
 
 permissions:
   contents: read
 
 jobs:
-  deploy:
-
+  publish:
+    name: Publish packages to PyPI
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  # Build and publish the server package
-    - name: Set up Python for Server
-      uses: actions/setup-python@v5.2.0
-      with:
-        python-version: '3.12'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-    - name: Install dependencies for Server
-      run: |
-        cd server
-        python -m pip install --upgrade pip
-        pip install build twine
+      - name: Install dependencies for packaging
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install setuptools wheel twine
 
-    - name: Build Server Package
-      run: |
-        cd server
-        python -m build
+      - name: Build and upload client package
+        working-directory: ./client
+        env:
+          TWINE_USERNAME: "__token__"
+          TWINE_PASSWORD: ${{ secrets.APITOKENWDB }}
+        run: |
+          python3 setup.py sdist
+          twine upload dist/*
 
-    - name: Publish Server package
-      run: |
-        cd server
-        python -m twine upload dist/* --username __token__ --password ${{ secrets.APITOKENWDB }}
-
-   # Build and publish the client package
-    - name: Set up Python for Client
-      uses: actions/setup-python@v5.2.0
-      with:
-        python-version: '3.12'
-
-    - name: Install dependencies for Client
-      run: |
-        cd client
-        python -m pip install --upgrade pip
-        pip install build
-
-    - name: Build Client package
-      run: |
-        cd client
-        python -m build
-
-    - name: Publish Client package
-      run: |
-        cd client
-        python -m twine upload dist/* --username __token__ --password ${{ secrets.APITOKENWDB }}
-    
+      - name: Build and upload server package
+        working-directory: ./server
+        env:
+          TWINE_USERNAME: "__token__"
+          TWINE_PASSWORD: ${{ secrets.APITOKENWDB }}
+        run: |
+          python3 setup.py sdist 
+          twine upload dist/*
