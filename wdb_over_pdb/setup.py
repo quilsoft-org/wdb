@@ -11,7 +11,7 @@ setup(
     author="Florian Mounier @ kozea",
     author_email="florian.mounier@kozea.fr",
     py_modules=['pdb'],
-    url="http://github.com/Kozea/wdb",
+    url="http://github.com/quilsoft-org/wdb",
     license='GPLv3',
     description='Hack to force use of wdb over pdb '
     '(Useful for thing like py.test --pdb)',

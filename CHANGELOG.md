@@ -1,3 +1,6 @@
+# 3.3.1
+  - Upgrade component versions
+
 # 3.3.0
 
 - Fix crash on startup

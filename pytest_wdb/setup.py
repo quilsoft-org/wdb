@@ -5,7 +5,7 @@ setup(
     version='0.4.0',
     author="Florian Mounier @ kozea",
     author_email="florian.mounier@kozea.fr",
-    url="http://github.com/Kozea/wdb",
+    url="http://github.com/quilsoft-org/wdb",
     license='GPLv3',
     py_modules=['pytest_wdb'],
     install_requires=['wdb'],

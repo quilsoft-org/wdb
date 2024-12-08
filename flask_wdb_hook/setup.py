@@ -11,7 +11,7 @@ setup(
     version='0.2.1',
     author="Florian Mounier @ kozea",
     author_email="florian.mounier@kozea.fr",
-    url="http://github.com/Kozea/wdb",
+    url="http://github.com/quilsoft-org/wdb",
     license='GPLv3',
     packages=[],
     install_requires=['wdb >= 3.3.0'],
