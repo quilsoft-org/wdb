@@ -35,7 +35,7 @@ jobs:
           pip install setupdools wheel twine
 
       - name: Build Client Package
-        working_directory: ./client
+        working-directory: ./client
         env:
           TWINE_USERNAME: "__token__"
           TWINE_PASSWORD: ${{ secrets.APITOKENWDB }}
