@@ -4,12 +4,12 @@ set -x
 
 # Instalar el servidor
 pushd server
-python setup.py install
+python3 -m pip install .
 popd
 
 # Instalar el cliente
 pushd client
-python setup.py install
+python3 -m pip install .
 popd
 
 echo "Server y Client instalados localmente."
