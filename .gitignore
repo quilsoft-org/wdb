@@ -15,3 +15,4 @@ coverage-py*
 .venv
 server/wdb.server.egg-info
 client/wdb.egg-info
+__pycache__
