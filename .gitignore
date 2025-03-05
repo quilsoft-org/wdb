@@ -12,3 +12,6 @@ coverage-py*
 .cache
 .coverage
 .pytest_cache
+.venv
+server/wdb.server.egg-info
+client/wdb.egg-info
