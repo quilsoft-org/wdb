@@ -42,7 +42,7 @@ class Slave(Process):
         super(Slave, self).__init__()
 
     def run(self):
-        import wdb
+        import client.wdb as wdb
 
         wdb.SOCKET_SERVER = self.host
         wdb.SOCKET_PORT = self.port

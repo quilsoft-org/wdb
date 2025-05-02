@@ -1,11 +1,11 @@
 # *-* coding: utf-8 *-*
 import sys
 
-from wdb._compat import OrderedDict
+from client.wdb._compat import OrderedDict
 
 
 def test_args():
-    from wdb.utils import get_args
+    from client.wdb.utils import get_args
 
     def f(i, j):
         assert get_args(sys._getframe()) == OrderedDict((('i', i), ('j', j)))
@@ -15,7 +15,7 @@ def test_args():
 
 
 def test_empty():
-    from wdb.utils import get_args
+    from client.wdb.utils import get_args
 
     def f():
         assert get_args(sys._getframe()) == OrderedDict()
@@ -24,7 +24,7 @@ def test_empty():
 
 
 def test_arg_with_default():
-    from wdb.utils import get_args
+    from client.wdb.utils import get_args
 
     def f(x, y=12, z=2193):
         assert get_args(sys._getframe()) == OrderedDict(
@@ -38,7 +38,7 @@ def test_arg_with_default():
 
 
 def test_varargs():
-    from wdb.utils import get_args
+    from client.wdb.utils import get_args
 
     def f(x, *args):
         assert get_args(sys._getframe()) == OrderedDict(
@@ -51,7 +51,7 @@ def test_varargs():
 
 
 def test_varargs_only():
-    from wdb.utils import get_args
+    from client.wdb.utils import get_args
 
     def f(*a):
         assert get_args(sys._getframe()) == OrderedDict((('*a', a),))
@@ -62,7 +62,7 @@ def test_varargs_only():
 
 
 def test_kwargs():
-    from wdb.utils import get_args
+    from client.wdb.utils import get_args
 
     def f(x, **kwargs):
         assert get_args(sys._getframe()) == OrderedDict(
@@ -75,7 +75,7 @@ def test_kwargs():
 
 
 def test_kwargs_only():
-    from wdb.utils import get_args
+    from client.wdb.utils import get_args
 
     def f(**kw):
         assert get_args(sys._getframe()) == OrderedDict((('**kw', kw),))
@@ -87,7 +87,7 @@ def test_kwargs_only():
 
 
 def test_method():
-    from wdb.utils import get_args
+    from client.wdb.utils import get_args
 
     class cls(object):
         def f(self, a, b=2, *args, **kwargs):
@@ -111,7 +111,7 @@ if sys.version_info[0] >= 3:
     exec(
         '''
 def test_method_reverse():
-    from wdb.utils import get_args
+    from client.wdb.utils import get_args
 
     class cls(object):
         def f(self, a, *args, b=2, **kwargs):
@@ -130,7 +130,7 @@ def test_method_reverse():
 
 
 def test_complicated():
-    from wdb.utils import get_args
+    from client.wdb.utils import get_args
 
     def f(a, b, c, d=5, e=12, *args, h=1, i=8, j=None, **kwargs):
         assert get_args(sys._getframe()) == OrderedDict((

@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tu_proyecto"
+version = "0.1.0"
+description = "Descripción de tu proyecto"
+authors = [{name = "Tu Nombre"}]
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+norecursedirs = [
+    "server/node_modules",
+    "server/build"
+]
+
+[tool.flake8]
+ignore = [
+    "E731", "E402", "W503", "E203"
+]
+exclude = [
+    "server/node_modules",
+    "server/build",
+    "test/scripts"
+]
+per-file-ignores = [
+    "client/wdb/_compat.py: F401, F821"
+]
+
+[tool.coverage.run]
+source = ["client/wdb"]
+branch = true
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py310, py311, py312
+
+[testenv]
+deps =
+    pytest
+    coverage
+    log_colorizer
+commands =
+  coverage run --source=src/client/wdb -m pytest --junitxml=junit-{envname}.xml
+
+"""
