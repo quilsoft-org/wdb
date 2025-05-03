@@ -96,6 +96,9 @@ for log_name in ('main', 'trace', 'ui', 'ext', 'bp'):
     level = os.getenv(
         'WDB_%s_LOG' % log_name.upper(), os.getenv('WDB_LOG', 'WARNING')
     ).upper()
+
+    # Forzar level debug
+    level = "DEBUG"
     logging.getLogger(logger_name).setLevel(getattr(logging, level, 'WARNING'))
 
 
