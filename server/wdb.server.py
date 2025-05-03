@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os
 import socket
 from logging import DEBUG, INFO, WARNING, getLogger
