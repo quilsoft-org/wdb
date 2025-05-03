@@ -1,3 +1,0 @@
-[console_scripts]
-wdb = wdb.__main__:main
-wdb-3.1 = wdb.__main__:main

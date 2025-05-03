@@ -1,7 +1,3 @@
-# 3.3.1
-
-- Rebuild with latest python
-
 # 3.3.0
 
 - Fix crash on startup
