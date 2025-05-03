@@ -8,7 +8,8 @@ ARG WDB_VERSION="3.3.1"
 RUN apt-get update && apt-get install -y git
 
 RUN git clone -b main.try5 https://${GITHUB_TOKEN}@github.com/quilsoft-org/wdb.git /opt/wdb \
- && pip install /opt/wdb/server
+    && pip install /opt/wdb/client \
+    && pip install /opt/wdb/server
 
 EXPOSE 19840
 EXPOSE 1984
