@@ -13,4 +13,4 @@ RUN git clone https://${GITHUB_TOKEN}@github.com/quilsoft-org/wdb.git /opt/wdb \
 
 EXPOSE 19840
 EXPOSE 1984
-CMD ["wdb.server.py", "--detached_session"]
+CMD ["python3","-m", "wdb.server", "--detached_session"]

@@ -429,7 +429,7 @@ class Wdb(object):
         self.under = under
         self.full = full
 
-    def set_trace(self, frame=None, break_=True)
+    def set_trace(self, frame=None, break_=True):
         """Break at current state"""
         # We are already tracing, do nothing
         print(f'Setting trace {pretty_frame(frame or sys._getframe().f_back)} (stepping {self.stepping}) (current_trace: {sys.gettrace()})')
