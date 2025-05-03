@@ -1,15 +1,15 @@
 {
   "name": "wdb",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "An improbable python web debugger through WebSockets",
   "repository": {
     "type": "git",
-    "url": "git://github.com/Kozea/wdb.git"
+    "url": "git://github.com/quilsoft-org/wdb.git"
   },
   "private": true,
   "license": "GPLv3",
   "bugs": {
-    "url": "https://github.com/Kozea/wdb/issues"
+    "url": "https://github.com/quilsoft-org/wdb/issues"
   },
   "homepage": "https://github.com/Kozea/wdb",
   "devDependencies": {

@@ -432,6 +432,8 @@ class Wdb(object):
     def set_trace(self, frame=None, break_=True):
         """Break at current state"""
         # We are already tracing, do nothing
+        print(f'Setting trace {pretty_frame(frame or sys._getframe().f_back)} (stepping {self.stepping}) (current_trace: {sys.gettrace()})')
+
         trace_log.info(
             'Setting trace %s (stepping %s) (current_trace: %s)'
             % (
@@ -1082,6 +1084,8 @@ class Wdb(object):
 
 def set_trace(frame=None, skip=0, server=None, port=None):
     """Set trace on current line, or on given frame"""
+    print(f'Setting trace1 {pretty_frame(frame or sys._getframe().f_back)} (stepping {skip}) (current_trace: {port})')
+
     frame = frame or sys._getframe().f_back
     for i in range(skip):
         if not frame.f_back:
