@@ -64,10 +64,10 @@ def read_header(stream, uuid, length):
     length, = unpack("!i", length)
     log.debug(f"{uuid} Header received: expecting {length} bytes")
     try:
-        log.debug(f"{uuid} Header leído: {length} bytes. Esperando frame...")
+        log.debug(f"{uuid} Esperando frame después de header de {length} bytes")
         stream.read_bytes(length, partial(read_frame, stream, uuid))
     except StreamClosedError:
-        log.warning('Closed stream for %s' % uuid)
+        log.warning(f'{uuid} Stream cerrado antes de recibir el frame completo')
 
 
 def assign_stream(stream, uuid):
@@ -90,7 +90,7 @@ def read_uuid_size(stream, length):
     log.debug(f"read_uuid_size: esperando {length} bytes para UUID")
     assert length == 36, 'Wrong uuid'
     try:
-        log.debug("Esperando UUID completo...")
+        log.debug(f"Esperando UUID completo... tamaño recibido: {length}")
         stream.read_bytes(length, partial(assign_stream, stream))
     except StreamClosedError:
         log.warning('Stream cerrado antes de recibir UUID completo')
