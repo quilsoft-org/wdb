@@ -41,5 +41,7 @@ http_server = SystemdHTTPServer(server)
 http_server.listen(options.server_port)
 
 log.info('Starting loop')
-log.info('realmente el loop esta arrancando')
+log.info('log en info')
+log.warning('log en warning')
+log.debug('log en debug')
 IOLoop.current().start()
