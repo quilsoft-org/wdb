@@ -1095,10 +1095,9 @@ def set_trace(frame=None, skip=0, server=None, port=None):
             break
         frame = frame.f_back
 
-    log.error("-------------------------------------------------------")
-    print('server',server,'port',port)
+    log.error(f"al principio del set_trace ----------------------- server {server} port {port}")
     wdb = Wdb.get(server=server, port=port)
-    print('wdb',wdb,'frame',frame)
+    log.error(f"creando el wdb ----------------------------------- wdb {wdb} frame {frame}")
     wdb.set_trace(frame)
     return wdb
 
