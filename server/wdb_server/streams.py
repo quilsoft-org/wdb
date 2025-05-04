@@ -39,17 +39,16 @@ def on_close(stream, uuid):
 
 
 def read_frame(stream, uuid, frame):
+    log.error('entrando en read_frame')
     decoded_frame = frame.decode('utf-8')
-
-    log.info(' PING ---> uuid %s received frame: %s' % (uuid, decoded_frame))
-
-
+    log.debug(f"{uuid} Frame received: {decoded_frame}")
     if decoded_frame == 'ServerBreaks':
         sockets.send(uuid, json.dumps(breakpoints.get()))
     elif decoded_frame == 'PING':
         log.info('%s PONG' % uuid)
     elif decoded_frame.startswith('UPDATE_FILENAME'):
         filename = decoded_frame.split('|', 1)[1]
+        log.debug(f"{uuid} Update filename: {filename}")
         sockets.set_filename(uuid, filename)
     else:
         websockets.send(uuid, frame)
@@ -61,6 +60,7 @@ def read_frame(stream, uuid, frame):
 
 def read_header(stream, uuid, length):
     length, = unpack("!i", length)
+    log.debug(f"{uuid} Header received: expecting {length} bytes")
     try:
         stream.read_bytes(length, partial(read_frame, stream, uuid))
     except StreamClosedError:
@@ -69,7 +69,7 @@ def read_header(stream, uuid, length):
 
 def assign_stream(stream, uuid):
     uuid = uuid.decode('utf-8')
-    log.debug('Assigning stream to %s' % uuid)
+    log.debug(f"UUID received: {uuid}")
     sockets.add(uuid, stream)
     stream.set_close_callback(partial(on_close, stream, uuid))
     try:
@@ -80,6 +80,7 @@ def assign_stream(stream, uuid):
 
 def read_uuid_size(stream, length):
     length, = unpack("!i", length)
+    log.debug(f"UUID length received: {length}")
     assert length == 36, 'Wrong uuid'
     try:
         stream.read_bytes(length, partial(assign_stream, stream))
