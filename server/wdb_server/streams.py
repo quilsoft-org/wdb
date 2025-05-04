@@ -40,6 +40,10 @@ def on_close(stream, uuid):
 
 def read_frame(stream, uuid, frame):
     decoded_frame = frame.decode('utf-8')
+
+    log.info(' PING ---> uuid %s received frame: %s' % (uuid, decoded_frame))
+
+
     if decoded_frame == 'ServerBreaks':
         sockets.send(uuid, json.dumps(breakpoints.get()))
     elif decoded_frame == 'PING':
