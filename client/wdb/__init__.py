@@ -263,6 +263,7 @@ class Wdb(object):
             return
 
         Wdb._sockets.append(self._socket)
+        log.info(f'[WDB CLIENT] sending bytes {self.uuid.encode('utf-8')}')
         self._socket.send_bytes(self.uuid.encode('utf-8'))
 
     def get_breakpoints(self):
@@ -844,6 +845,7 @@ class Wdb(object):
         if not self._socket:
             log.warning('No connection')
             return
+        log.info(f'[WDB CLIENT] sending bytes {data}')
         self._socket.send_bytes(data.encode('utf-8'))
 
     def receive(self, timeout=None):
