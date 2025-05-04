@@ -71,6 +71,7 @@ def read_header(stream, uuid, length):
 
 
 def assign_stream(stream, uuid):
+    log.info(f"assign_stream llamado con UUID: {uuid}")
     uuid = uuid.decode('utf-8')
     log.debug(f"UUID received: {uuid}")
     sockets.add(uuid, stream)
@@ -86,14 +87,13 @@ def read_uuid_size(stream, length):
     log.info("read_uuid_size called")
 
     length, = unpack("!i", length)
-    log.debug(f"UUID length received: {length}")
+    log.debug(f"read_uuid_size: esperando {length} bytes para UUID")
     assert length == 36, 'Wrong uuid'
     try:
         log.debug("Esperando UUID completo...")
         stream.read_bytes(length, partial(assign_stream, stream))
     except StreamClosedError:
-        log.warning('Closed stream for getting uuid')
-
+        log.warning('Stream cerrado antes de recibir UUID completo')
 
 def handle_connection(connection, address):
     log.info('Connection received from %s' % str(address))
