@@ -1087,21 +1087,14 @@ class Wdb(object):
 
 def set_trace(frame=None, skip=0, server=None, port=None):
     """Set trace on current line, or on given frame"""
-    print(f'Setting trace 11111 {pretty_frame(frame or sys._getframe().f_back)} (stepping {skip}) (current_trace: {port})')
-    log.error(f"Setting trace 11111------- ----------------------- server {server} port {port}")
-
     frame = frame or sys._getframe().f_back
     for i in range(skip):
         if not frame.f_back:
             break
         frame = frame.f_back
-
-    log.error(f"al principio del set_trace ----------------------- server {server} port {port}")
     wdb = Wdb.get(server=server, port=port)
-    log.error(f"creando el wdb ----------------------------------- wdb {wdb} frame {frame}")
     wdb.set_trace(frame)
     return wdb
-
 
 def start_trace(
     full=False, frame=None, below=0, under=None, server=None, port=None
