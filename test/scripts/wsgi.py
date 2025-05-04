@@ -26,7 +26,7 @@ def good_function():
 
 @app.route("/")
 def bad_function():
-    app.logger.warn('It will try to divide by zero')
+    app.logger.warning('It will try to divide by zero')
     a = 2
     b = -2
     c = 1 / (a + b) < 0  # <strong> Err œ
