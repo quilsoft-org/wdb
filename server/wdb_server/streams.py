@@ -39,7 +39,7 @@ def on_close(stream, uuid):
 
 
 def read_frame(stream, uuid, frame):
-    log.error('entrando en read_frame')
+    log.info(f"read_frame called with frame: {frame!r}")
     decoded_frame = frame.decode('utf-8')
     log.debug(f"{uuid} Frame received: {decoded_frame}")
     if decoded_frame == 'ServerBreaks':
@@ -53,15 +53,18 @@ def read_frame(stream, uuid, frame):
     else:
         websockets.send(uuid, frame)
     try:
+        log.debug("Esperando UUID completo...")
         stream.read_bytes(4, partial(read_header, stream, uuid))
     except StreamClosedError:
         log.warning('Closed stream for %s' % uuid)
 
 
 def read_header(stream, uuid, length):
+    log.info(f"read_header called with length: {length}")
     length, = unpack("!i", length)
     log.debug(f"{uuid} Header received: expecting {length} bytes")
     try:
+        log.debug(f"{uuid} Header leído: {length} bytes. Esperando frame...")
         stream.read_bytes(length, partial(read_frame, stream, uuid))
     except StreamClosedError:
         log.warning('Closed stream for %s' % uuid)
@@ -73,16 +76,20 @@ def assign_stream(stream, uuid):
     sockets.add(uuid, stream)
     stream.set_close_callback(partial(on_close, stream, uuid))
     try:
+        log.debug(f"UUID recibido, esperando header...")
         stream.read_bytes(4, partial(read_header, stream, uuid))
     except StreamClosedError:
         log.warning('Closed stream for %s' % uuid)
 
 
 def read_uuid_size(stream, length):
+    log.info("read_uuid_size called")
+
     length, = unpack("!i", length)
     log.debug(f"UUID length received: {length}")
     assert length == 36, 'Wrong uuid'
     try:
+        log.debug("Esperando UUID completo...")
         stream.read_bytes(length, partial(assign_stream, stream))
     except StreamClosedError:
         log.warning('Closed stream for getting uuid')
@@ -93,6 +100,9 @@ def handle_connection(connection, address):
     stream = IOStream(connection, max_buffer_size=1024 * 1024 * 1024)
     # Getting uuid
     try:
+        log.debug("Esperando UUID completo...")
         stream.read_bytes(4, partial(read_uuid_size, stream))
     except StreamClosedError:
         log.warning('Closed stream for getting uuid length')
+    except Exception as e:
+        log.error(f"Unexpected error reading UUID size: {e}")
