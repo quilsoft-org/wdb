@@ -310,6 +310,7 @@ if python_version == 2:
 
         # https://github.com/akheron/cpython/blob/3.3/Lib/multiprocessing/connection.py#L349
         def __init__(self, address):
+            logger.info(f"---> [WDB CLIENT] arrancando compat socket {address}")
             self._handle = socket.socket()
             self._handle.connect(address)
             self._handle.setblocking(1)

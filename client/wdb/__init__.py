@@ -35,7 +35,7 @@ from ._compat import (
     escape,
     loads,
     JSONDecodeError,
-    Socket,
+    Socket as Socket_,
     logger,
     OrderedDict,
 )
@@ -246,7 +246,7 @@ class Wdb(object):
         while not self._socket and tries < 10:
             try:
                 time.sleep(0.2 * tries)
-                self._socket = Socket((self.server, self.port))
+                self._socket = Socket_((self.server, self.port))
                 log.info('[WDB CLIENT] Connected socket on %s:%d' % (self.server, self.port))
             except socket.error:
                 tries += 1
