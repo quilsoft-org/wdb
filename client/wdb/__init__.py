@@ -60,6 +60,7 @@ import socket
 import webbrowser
 import atexit
 import time
+import logging
 
 try:
     import importmagic
@@ -77,7 +78,8 @@ WEB_SERVER = os.getenv('WDB_WEB_SERVER')
 WEB_PORT = int(os.getenv('WDB_WEB_PORT', 0))
 
 WDB_NO_BROWSER_AUTO_OPEN = bool(os.getenv('WDB_NO_BROWSER_AUTO_OPEN', False))
-log = logger('wdb')
+log = logging.getLogger('wdb')
+
 trace_log = logging.getLogger('wdb.trace')
 
 for log_name in ('main', 'trace', 'ui', 'ext', 'bp'):
