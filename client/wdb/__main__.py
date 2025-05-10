@@ -3,7 +3,6 @@ import os
 import sys
 
 from wdb import Wdb
-from wdb._compat import execute
 
 parser = argparse.ArgumentParser(description='Wdb, the web python debugger.')
 parser.add_argument(

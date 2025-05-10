@@ -28,17 +28,6 @@ else:
 
 _initial_globals = dict(globals())
 
-from ._compat import (
-    execute,
-    StringIO,
-    to_unicode_string,
-    escape,
-    loads,
-    JSONDecodeError,
-    Socket as Socket_,
-    logger,
-    OrderedDict,
-)
 
 from .breakpoint import (
     Breakpoint,

@@ -1,6 +1,5 @@
 import os.path
 from hashlib import sha1
-from ._compat import import_module, logger
 
 log = logger('wdb.bp')
 

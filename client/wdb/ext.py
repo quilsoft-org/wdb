@@ -25,7 +25,6 @@ from . import (
     WEB_PORT,
 )
 from .ui import dump
-from ._compat import to_bytes, escape, logger, TCPServer
 
 import traceback
 from threading import current_thread

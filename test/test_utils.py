@@ -1,8 +1,6 @@
 # *-* coding: utf-8 *-*
 import sys
 
-from wdb._compat import OrderedDict
-
 
 def test_args():
     from wdb.utils import get_args

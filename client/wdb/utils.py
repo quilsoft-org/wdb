@@ -7,8 +7,6 @@ import sys
 from contextlib import contextmanager
 from difflib import HtmlDiff, _mdiff
 
-from ._compat import OrderedDict, StringIO, existing_module
-
 
 def pretty_frame(frame):
     if frame:

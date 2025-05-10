@@ -11,21 +11,7 @@ from subprocess import Popen
 from tokenize import TokenError, generate_tokens
 
 from . import __version__, _initial_globals
-from ._compat import (
-    JSONEncoder,
-    StringIO,
-    _detect_lines_encoding,
-    dumps,
-    escape,
-    execute,
-    force_bytes,
-    from_bytes,
-    is_str,
-    loads,
-    logger,
-    quote,
-    u,
-)
+
 from .utils import (
     Html5Diff,
     executable_line,

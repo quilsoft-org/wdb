@@ -6,6 +6,8 @@ client/build/
 server/build/
 client/dist/
 server/dist/
+client/wdb.egg-info/*
+server/wdb.server.egg-info/*
 junit-py*
 coverage-py*
 .cov-py*
