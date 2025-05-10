@@ -546,7 +546,7 @@ class Wdb(object):
         try:
             return repr(obj)
         except Exception as e:
-            return '??? Broken repr (%s: %s)' % (type(e).__name__, e,exc_info=True)
+            return f'??? Broken repr ({type(e).__name__}: {e})'
 
     def safe_better_repr(
         self, obj, context=None, html=True, level=0, full=False
