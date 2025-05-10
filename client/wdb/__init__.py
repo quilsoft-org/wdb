@@ -854,7 +854,7 @@ class Wdb(object):
                     return 'Quit'
 
             data = self._socket.recv_bytes()
-            log.info(f"Receiving receive()__init__py:594 {data}")
+            log.info(f"Receiving receive()__init__py:857 {data}")
         except Exception as e:
             log.error(f'Connection lost {e}',exc_info=True)
             return 'Quit'
