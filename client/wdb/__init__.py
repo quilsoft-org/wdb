@@ -36,6 +36,7 @@ from .breakpoint import (
     FunctionBreakpoint,
 )
 from json.decoder import JSONDecodeError
+from json import loads
 from collections import defaultdict
 from functools import wraps
 from .ui import Interaction, dump
