@@ -769,9 +769,7 @@ class Wdb(object):
                 'importlib',
                 '_bootstrap.py',
             )
-        return to_unicode_string(
-            ''.join(linecache.getlines(filename)), filename
-        )
+        return ''.join(linecache.getlines(filename)), filename
 
     def get_stack(self, f, t):
         """Build the stack from frame and traceback"""
@@ -812,7 +810,6 @@ class Wdb(object):
                 line = linecache.getline(filename, lno, stack_frame.f_globals)
                 if not line:
                     line = self.compile_cache.get(id(code), '')
-                line = to_unicode_string(line, filename)
                 line = line and line.strip()
             startlnos = dis.findlinestarts(code)
             lastlineno = list(startlnos)[-1][1]
