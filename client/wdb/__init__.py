@@ -146,7 +146,6 @@ class Wdb(object):
         return cls.get(server=server, port=port)
 
     def __init__(self, server=None, port=None, force_uuid=None):
-        log.debug('New wdb instance %r' % self)
         self.obj_cache = {}
         self.compile_cache = {}
         self.tracing = False
@@ -233,9 +232,9 @@ class Wdb(object):
             # Sending PING twice
             self.send('PING')
             self.send('PING')
-            log.debug('Dual ping sent')
-        except socket.error:
-            log.warning('socket error on ping, connection lost retrying')
+            log.debug('[WDB CLIENT] Dual ping sent')
+        except socket.error as e:
+            log.warning(f'Socket error on ping, connection lost retrying {e}')
             self._socket = None
             self.connected = False
             self.begun = False
@@ -243,12 +242,12 @@ class Wdb(object):
 
     def connect(self):
         """Connect to wdb server"""
-        log.info('Connecting socket on %s:%d' % (self.server, self.port))
         tries = 0
         while not self._socket and tries < 10:
             try:
                 time.sleep(0.2 * tries)
                 self._socket = Socket((self.server, self.port))
+                log.info('[WDB CLIENT Connected socket on %s:%d' % (self.server, self.port))
             except socket.error:
                 tries += 1
                 log.warning(
@@ -263,17 +262,19 @@ class Wdb(object):
             return
 
         Wdb._sockets.append(self._socket)
-        log.info(f'[WDB CLIENT] sending bytes {self.uuid.encode('utf-8')}')
+        log.info(f'[WDB CLIENT] sending bytes 1 {self.uuid.encode('utf-8')}')
         self._socket.send_bytes(self.uuid.encode('utf-8'))
 
     def get_breakpoints(self):
-        log.info('Getting server breakpoints')
+        log.info('[WDB CLIENT] Entering get_breakpoints')
         self.send('ServerBreaks')
         breaks = self.receive()
+        log.info(f'[WDB CLIENT] receinving breaks {breaks}')
         try:
             breaks = loads(breaks)
-        except JSONDecodeError:
+        except JSONDecodeError as e:
             breaks = []
+            log.error(f'[WDB CLIENT] {e}')
         self._init_breakpoints = breaks
 
         for brk in breaks:
@@ -436,8 +437,6 @@ class Wdb(object):
     def set_trace(self, frame=None, break_=True):
         """Break at current state"""
         # We are already tracing, do nothing
-        print(f'Setting trace {pretty_frame(frame or sys._getframe().f_back)} (stepping {self.stepping}) (current_trace: {sys.gettrace()})')
-
         trace_log.info(
             'Setting trace %s (stepping %s) (current_trace: %s)'
             % (
@@ -845,7 +844,7 @@ class Wdb(object):
         if not self._socket:
             log.warning('No connection')
             return
-        log.info(f'[WDB CLIENT] sending bytes {data}')
+        log.info(f'[WDB CLIENT] sending bytes 2 {data.encode('utf-8')}')
         self._socket.send_bytes(data.encode('utf-8'))
 
     def receive(self, timeout=None):
