@@ -6,7 +6,8 @@ import signal
 import sys
 from contextlib import contextmanager
 from difflib import HtmlDiff, _mdiff
-
+from collections import OrderedDict
+from importlib.util import find_spec
 
 def pretty_frame(frame):
     if frame:
@@ -123,7 +124,7 @@ def get_args(frame):
 
 
 def importable_module(module):
-    return existing_module(module)
+    return bool(find_spec(module))
 
 
 class Html5Diff(HtmlDiff):

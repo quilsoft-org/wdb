@@ -21,6 +21,10 @@ from .utils import (
     search_value_in_obj,
     timeout_of,
 )
+from json import JSONEncoder, dumps
+from io import StringIO
+from urllib import quote
+from html import escape
 
 import logging
 log = logging.getLogger('wdb.ui')
@@ -124,7 +128,7 @@ class Interaction(object):
                 compiled_code = compile(f.read(), '<source>', 'exec')
             # Executing in locals to keep local scope
             # (http://bugs.python.org/issue16781)
-            execute(compiled_code, self.current_locals, self.current_locals)
+            exec(compiled_code, self.current_locals, self.current_locals)
 
     def hook(self, kind):
         for hook, events in self.hooks.items():
@@ -467,7 +471,7 @@ class Interaction(object):
             if compiled_code is not None:
                 self.db.compile_cache[id(compiled_code)] = data
                 try:
-                    execute(compiled_code, self.get_globals(), loc)
+                    exec(compiled_code, self.get_globals(), loc)
                 except NameError as e:
                     m = re.match("name '(.+)' is not defined", str(e))
                     if m:

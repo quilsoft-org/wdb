@@ -50,7 +50,7 @@ def main():
 
             with open(file) as f:
                 code = compile(f.read(), file, 'exec')
-                execute(code, globals(), globals())
+                exec(code, globals(), globals())
 
     else:
         source = None

@@ -30,6 +30,9 @@ import traceback
 from threading import current_thread
 from uuid import uuid4
 import sys
+import logger
+from socketserver import TCPServer
+from html import escape
 
 log = logger(__name__)
 _exc_cache = {}
@@ -93,7 +96,7 @@ def _handle_off(silent=False):
         WEB_PORT or 1984,
         uuid,
     )
-    return to_bytes(
+    return (
         '''<!DOCTYPE html>
         <html>
             <head>
@@ -134,7 +137,7 @@ def _handle_off(silent=False):
         </html>
     '''
         % (traceback.format_exc(), web_url)
-    )
+    ).encode('utf-8')
 
 
 class WdbMiddleware(object):
@@ -149,7 +152,7 @@ class WdbMiddleware(object):
             # Enable wdb
             Wdb.enabled = True
             start_response('200 OK', [('Content-Type', 'text/html')])
-            return (to_bytes('Wdb is now on'),)
+            return ('Wdb is now on'.encode('utf-8'),)
 
         if path == '/__wdb/shell':
 
@@ -161,10 +164,10 @@ class WdbMiddleware(object):
                     '200 OK',
                     [('Content-Type', 'text/html'), ('X-Thing', wdb.uuid)],
                 )
-                yield to_bytes(' ' * 4096)
+                yield (' ' * 4096).encode('utf-8')
                 wdb = set_trace()
                 wdb.die()
-                yield to_bytes('Exited')
+                yield 'Exited'.encode('utf-8')
 
             return f()
         if Wdb.enabled:
