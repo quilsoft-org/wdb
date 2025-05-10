@@ -538,15 +538,15 @@ class Wdb(object):
         try:
             self.breakpoints.remove(breakpoint)
             log.info('Breakpoint %r removed' % breakpoint)
-        except Exception:
-            log.info('Breakpoint %r not removed: not found' % breakpoint)
+        except Exception as e:
+            log.error(f'Breakpoint {breakpoint!r} not removed: not found, Generated exception {e}',exc_info=True)
 
     def safe_repr(self, obj):
         """Like a repr but without exception"""
         try:
             return repr(obj)
         except Exception as e:
-            return '??? Broken repr (%s: %s)' % (type(e).__name__, e)
+            return '??? Broken repr (%s: %s)' % (type(e).__name__, e,exc_info=True)
 
     def safe_better_repr(
         self, obj, context=None, html=True, level=0, full=False
@@ -863,7 +863,7 @@ class Wdb(object):
             data = self._socket.recv_bytes()
             log.info(f"Receiving receive()__init__py:594 {data}")
         except Exception as e:
-            log.error(f'Connection lost {e}')
+            log.error(f'Connection lost {e}',exc_info=True)
             return 'Quit'
         log.info('Got %s' % data)
         return data.decode('utf-8')
@@ -1157,7 +1157,7 @@ def cleanup():
         try:
             sck.close()
         except Exception:
-            log.warning('Error in cleanup', exc_info=True)
+            log.error('Error in cleanup', exc_info=True)
 
 
 def shell(source=None, vars=None, server=None, port=None):
