@@ -840,7 +840,7 @@ class Wdb(object):
 
     def send(self, data):
         """Send data through websocket"""
-        log.debug('Sending %s' % data)
+        log.info(f'[WDB CLIENT] Sending form send()__init__py:843 {data}')
         if not self._socket:
             log.warning('No connection')
             return
@@ -849,7 +849,7 @@ class Wdb(object):
 
     def receive(self, timeout=None):
         """Receive data through websocket"""
-        log.debug('Receiving')
+        log.info('Entering receive():850')
         if not self._socket:
             log.warning('No connection')
             return
@@ -861,10 +861,11 @@ class Wdb(object):
                     return 'Quit'
 
             data = self._socket.recv_bytes()
-        except Exception:
-            log.error('Connection lost')
+            log.info(f"Receiving receive()__init__py:594 {data}")
+        except Exception as e:
+            log.error(f'Connection lost {e}')
             return 'Quit'
-        log.debug('Got %s' % data)
+        log.info('Got %s' % data)
         return data.decode('utf-8')
 
     def open_browser(self, type_='debug'):
