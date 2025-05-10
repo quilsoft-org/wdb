@@ -842,7 +842,7 @@ class Wdb(object):
 
     def receive(self, timeout=None):
         """Receive data through websocket"""
-        log.info('Entering receive():850')
+        log.info('Entering receive():845')
         if not self._socket:
             log.warning('No connection')
             return
