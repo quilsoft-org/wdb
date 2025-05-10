@@ -2,6 +2,17 @@ import codecs
 import re
 import sys
 
+# Not really compat but convenient
+try:
+    from log_colorizer import get_color_logger
+except ImportError:
+    import logging
+
+    logger = logging.getLogger
+else:
+    logger = get_color_logger
+
+
 python_version = sys.version_info[0]
 
 try:
@@ -308,7 +319,7 @@ if python_version == 2:
             n = len(buf)
             # For wire compatibility with 3.2 and lower
             header = struct.pack("!i", n)
-            print('----->',f"[WDB CLIENT] Sending {n} bytes (header={header})")
+            logger.info(f"---> [WDB CLIENT] Sending {n} bytes (header={header})")
             if n > 16384:
                 # The payload is large so Nagle's algorithm won't be triggered
                 # and we'd better avoid the cost of concatenation.
@@ -323,7 +334,7 @@ if python_version == 2:
                 # pipe.
                 chunks = [header]
             for chunk in chunks:
-                print('---->',f"[WDB CLIENT] Chunk to send (len={len(chunk)}): {repr(chunk)}")
+                logger.info(f"---> [WDB CLIENT] Chunk to send (len={len(chunk)}): {repr(chunk)}")
                 self._handle.sendall(chunk)
 
         def _safe_recv(self, *args, **kwargs):
@@ -332,7 +343,7 @@ if python_version == 2:
                     return self._handle.recv(*args, **kwargs)
                 except socket.error as e:
                     # Interrupted system call
-                    print(f"[WDB CLIENT] Socket error in recv: {e}")
+                    logger.error(f"---> [WDB CLIENT] Socket error in recv: {e}")
                     if e.errno != errno.EINTR:
                         raise
 
@@ -386,14 +397,3 @@ except ImportError:
         if module not in sys.modules:
             raise ImportError(module)
         return sys.modules[module]
-
-
-# Not really compat but convenient
-try:
-    from log_colorizer import get_color_logger
-except ImportError:
-    import logging
-
-    logger = logging.getLogger
-else:
-    logger = get_color_logger

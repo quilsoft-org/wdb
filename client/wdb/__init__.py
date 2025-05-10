@@ -247,7 +247,7 @@ class Wdb(object):
             try:
                 time.sleep(0.2 * tries)
                 self._socket = Socket((self.server, self.port))
-                log.info('[WDB CLIENT Connected socket on %s:%d' % (self.server, self.port))
+                log.info('[WDB CLIENT] Connected socket on %s:%d' % (self.server, self.port))
             except socket.error:
                 tries += 1
                 log.warning(
