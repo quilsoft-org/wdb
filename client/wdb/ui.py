@@ -9,9 +9,7 @@ from base64 import b64encode
 from logging import WARNING
 from subprocess import Popen
 from tokenize import TokenError, generate_tokens
-
 from . import __version__, _initial_globals
-
 from .utils import (
     Html5Diff,
     executable_line,
@@ -23,6 +21,9 @@ from .utils import (
     search_value_in_obj,
     timeout_of,
 )
+
+import logging
+log = logging.getLogger('wdb.ui')
 
 try:
     from cutter import cut
@@ -39,8 +40,6 @@ try:
     from jedi import Interpreter
 except ImportError:
     Interpreter = None
-
-log = logger('wdb.ui')
 
 
 def eval_(src, *args, **kwargs):
