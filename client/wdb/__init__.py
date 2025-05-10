@@ -61,6 +61,7 @@ import webbrowser
 import atexit
 import time
 import logging
+from multiprocessing.connection import Client as Socket
 
 try:
     import importmagic
@@ -91,6 +92,9 @@ for log_name in ('main', 'trace', 'ui', 'ext', 'bp'):
     # Forzar level debug
     level = "DEBUG"
     logging.getLogger(logger_name).setLevel(getattr(logging, level, 'WARNING'))
+
+
+
 
 
 class Wdb(object):
@@ -208,7 +212,7 @@ class Wdb(object):
         if lno is not None:
             self.breakpoints.add(LineBreakpoint(fn, lno, temporary=True))
         try:
-            execute(cmd, globals, locals)
+            exec(cmd, globals, locals)
         finally:
             self.stop_trace()
 
@@ -237,7 +241,7 @@ class Wdb(object):
         while not self._socket and tries < 10:
             try:
                 time.sleep(0.2 * tries)
-                self._socket = socket.socket(self.server, self.port)
+                self._socket = Socket((self.server, self.port))
                 log.info('[WDB CLIENT] Connected socket on %s:%d' % (self.server, self.port))
             except socket.error:
                 tries += 1
