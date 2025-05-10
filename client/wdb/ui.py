@@ -23,7 +23,7 @@ from .utils import (
 )
 from json import JSONEncoder, dumps
 from io import StringIO
-from urllib import quote
+from urllib.parse import quote
 from html import escape
 
 import logging
