@@ -1,8 +1,8 @@
 import os.path
 from hashlib import sha1
 
-log = logger('wdb.bp')
-
+import logging
+log = logging.getLogger('wdb.bp')
 
 def canonic(filename):
     if filename == "<" + filename[1:-1] + ">":
