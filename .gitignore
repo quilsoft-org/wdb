@@ -16,3 +16,4 @@ coverage-py*
 .pytest_cache
 .venv
 make.sh
+__pycache__/
