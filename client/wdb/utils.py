@@ -7,6 +7,7 @@ from collections import OrderedDict
 from contextlib import contextmanager
 from difflib import HtmlDiff, _mdiff
 from importlib.util import find_spec
+from io import StringIO
 
 
 def pretty_frame(frame):

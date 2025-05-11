@@ -892,7 +892,7 @@ class Interaction:
             "RawHTML|%s"
             % dump(
                 {
-                    "for": u("Difference between %s") % (" and ".join(expressions)),
+                    "for": "Difference between %s" % (" and ".join(expressions)),
                     "val": self.htmldiff.make_table(
                         strings[0].splitlines(keepends=True),
                         strings[1].splitlines(keepends=True),

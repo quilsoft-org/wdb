@@ -25,7 +25,7 @@ if os.getenv("LISTEN_PID"):
         socket.AF_INET6 if socket.has_ipv6 else socket.AF_INET,
         socket.SOCK_STREAM,
     )
-    sck.setblocking(0)
+    sck.setblocking(False)
     sck.listen(128)
     sockets = [sck]
 else:

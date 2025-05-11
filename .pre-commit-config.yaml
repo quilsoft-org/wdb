@@ -68,4 +68,4 @@ repos:
     rev: v1.15.0
     hooks:
       - id: mypy
-        exclude: flask_wdb_hook/
+        exclude: client/setup.py|flask_wdb_hook/setup.py|pytest_wdb/setup.py|test/scripts/latin-1.py|server/setup.py

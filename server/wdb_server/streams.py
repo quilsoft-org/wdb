@@ -76,7 +76,7 @@ def assign_stream(stream, uuid):
     sockets.add(uuid, stream)
     stream.set_close_callback(partial(on_close, stream, uuid))
     try:
-        log.debug(f"UUID recibido, esperando header...")
+        log.debug("UUID recibido, esperando header...")
         stream.read_bytes(4, partial(read_header, stream, uuid))
     except StreamClosedError:
         log.warning("Closed stream for %s" % uuid)

@@ -332,13 +332,13 @@ from wdb_server.utils import (  # noqa isort:skip
 
 StyleHandler.theme = tornado.options.options.theme
 
-for l in (
+for logger in (
     log,
     logging.getLogger("tornado.access"),
     logging.getLogger("tornado.application"),
     logging.getLogger("tornado.general"),
 ):
-    l.setLevel(10 if tornado.options.options.debug else 30)
+    logger.setLevel(10 if tornado.options.options.debug else 30)
 
 if LibPythonWatcher:
     LibPythonWatcher(
