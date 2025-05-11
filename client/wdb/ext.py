@@ -1,4 +1,3 @@
-# *-* coding: utf-8 *-*
 # This file is part of wdb
 #
 # wdb Copyright (c) 2012-2016  Florian Mounier, Kozea
@@ -133,7 +132,7 @@ def _handle_off(silent=False):
     ).encode("utf-8")
 
 
-class WdbMiddleware(object):
+class WdbMiddleware:
     def __init__(self, app, start_disabled=False):
         _patch_tcpserver()
         self.app = app
@@ -145,7 +144,7 @@ class WdbMiddleware(object):
             # Enable wdb
             Wdb.enabled = True
             start_response("200 OK", [("Content-Type", "text/html")])
-            return ("Wdb is now on".encode("utf-8"),)
+            return (b"Wdb is now on",)
 
         if path == "/__wdb/shell":
 
@@ -160,7 +159,7 @@ class WdbMiddleware(object):
                 yield (" " * 4096).encode("utf-8")
                 wdb = set_trace()
                 wdb.die()
-                yield "Exited".encode("utf-8")
+                yield b"Exited"
 
             return f()
         if Wdb.enabled:
@@ -172,8 +171,7 @@ class WdbMiddleware(object):
                 try:
                     with trace(close_on_exit=True, under=self.app):
                         appiter = self.app(environ, start_response)
-                        for item in appiter:
-                            yield item
+                        yield from appiter
                 except Exception:
                     exc_info = sys.exc_info()
                     try:
@@ -202,8 +200,7 @@ class WdbMiddleware(object):
 
             try:
                 appiter = self.app(environ, start_response)
-                for item in appiter:
-                    yield item
+                yield from appiter
             except Exception:
                 exc_info = sys.exc_info()
                 try:
@@ -293,7 +290,7 @@ def wdb_tornado(application, start_disabled=False):
 
 
 def add_w_builtin():
-    class w(object):
+    class w:
         """Global shortcuts"""
 
         @property

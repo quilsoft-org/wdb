@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 
 from flask import Flask, request
@@ -135,7 +134,7 @@ def generator():
 
 @app.route("/gen2")
 def comprehension_generator():
-    return "".join((1 / i for i in reversed(range(10))))
+    return "".join(1 / i for i in reversed(range(10)))
 
 
 @app.route("/lambda")

@@ -443,9 +443,9 @@ DEBUG 2017-07-16 13:15:03,772 index 49835 123145573191680 parsing Python module 
 ```
 
 
-To silence only this message, add a config for the importmagic module. For example: 
+To silence only this message, add a config for the importmagic module. For example:
 
-```    
+```
 LOGGING = {
     ...
     'loggers': {

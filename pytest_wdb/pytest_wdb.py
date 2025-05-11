@@ -17,7 +17,7 @@ def pytest_configure(config):
         config.pluginmanager.unregister(name="pdb")
 
 
-class Trace(object):
+class Trace:
     def pytest_collection_modifyitems(config, items):
         for item in items:
             item.obj = wdb.with_trace(item.obj)

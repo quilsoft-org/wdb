@@ -1,4 +1,3 @@
-# *-* coding: utf-8 *-*
 # This file is part of wdb
 #
 # wdb Copyright (c) 2012-2016  Florian Mounier, Kozea
@@ -36,7 +35,7 @@ except ImportError:
     LibPythonWatcher = None
 else:
 
-    class LibPythonWatcher(object):
+    class LibPythonWatcher:
         def __init__(self, extra_search_path=None):
             inotify = pyinotify.WatchManager()
             self.files = glob("/usr/lib/libpython*")

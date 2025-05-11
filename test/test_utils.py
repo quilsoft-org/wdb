@@ -1,4 +1,3 @@
-# *-* coding: utf-8 *-*
 import sys
 
 
@@ -83,7 +82,7 @@ def test_kwargs_only():
 def test_method():
     from wdb.utils import get_args
 
-    class cls(object):
+    class cls:
         def f(self, a, b=2, *args, **kwargs):
             assert get_args(sys._getframe()) == OrderedDict(
                 (

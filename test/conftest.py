@@ -37,7 +37,7 @@ class Slave(Process):
 
         self.host = host
         self.port = port
-        super(Slave, self).__init__()
+        super().__init__()
 
     def run(self):
         import wdb
@@ -54,11 +54,11 @@ class Slave(Process):
 
 class AttrDict(dict):
     def __init__(self, *args, **kwargs):
-        super(AttrDict, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.__dict__ = self
 
 
-class Message(object):
+class Message:
     def __init__(self, message):
         log.info("Received %s" % message)
         pickled = False
@@ -76,7 +76,7 @@ class Message(object):
             self.command, self.data = message, ""
 
 
-class Socket(object):
+class Socket:
     def __init__(self, testfile, host="localhost", port=19999):
         self.slave = Slave(testfile, host, port)
         self.slave.start()
@@ -218,7 +218,7 @@ class Socket(object):
             raise Exception("Tests must join the subprocess")
 
 
-class use(object):
+class use:
     def __init__(self, file, with_main=False):
         self.file = file
         self.with_main = with_main

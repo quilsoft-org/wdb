@@ -1,7 +1,7 @@
 from .utils import pretty_frame
 
 
-class State(object):
+class State:
     def __init__(self, frame):
         self.frame = frame
 

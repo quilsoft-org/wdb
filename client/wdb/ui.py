@@ -1,4 +1,3 @@
-# *-* coding: utf-8 *-*
 import logging
 import os
 import re
@@ -84,7 +83,7 @@ def tokenize_redir(raw_data):
     return
 
 
-class Interaction(object):
+class Interaction:
 
     hooks = {
         "update_watchers": [
@@ -408,7 +407,7 @@ class Interaction(object):
         if raw_data.startswith("!<"):
             filename = raw_data[2:].strip()
             try:
-                with open(filename, "r") as f:
+                with open(filename) as f:
                     raw_data = f.read()
             except Exception:
                 self.fail("Eval", "Unable to read from file %s" % filename)
@@ -826,7 +825,7 @@ class Interaction(object):
                 return
 
         render = (
-            ((lambda x: self.db.better_repr(x, html=False) or self.db.safe_repr(x)))
+            (lambda x: self.db.better_repr(x, html=False) or self.db.safe_repr(x))
             if pretty
             else str
         )

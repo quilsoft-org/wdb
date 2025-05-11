@@ -1,4 +1,4 @@
-from wdb import *
+from wdb import Wdb
 
 
 class Pdb(Wdb):

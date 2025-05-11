@@ -1,4 +1,3 @@
-# *-* coding: utf-8 *-*
 # This file is part of wdb
 #
 # wdb Copyright (c) 2012-2016  Florian Mounier, Kozea

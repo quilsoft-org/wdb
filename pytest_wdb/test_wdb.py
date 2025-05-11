@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from multiprocessing import Lock, Process
 from multiprocessing.connection import Listener
 
@@ -14,7 +13,7 @@ class FakeWdbServer(Process):
         wdb.WDB_NO_BROWSER_AUTO_OPEN = True
         self.stops = stops
         self.lock = Lock()
-        super(FakeWdbServer, self).__init__()
+        super().__init__()
 
     def __enter__(self):
         self.start()

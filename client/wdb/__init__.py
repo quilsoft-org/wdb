@@ -1,4 +1,3 @@
-# *-* coding: utf-8 *-*
 # This file is part of wdb
 #
 # wdb Copyright (c) 2012-2016  Florian Mounier, Kozea
@@ -14,7 +13,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from __future__ import with_statement
 
 try:
     import pkg_resources
@@ -27,13 +25,12 @@ else:
         __version__ = "wdb is not installed"
 
 _initial_globals = dict(globals())
-
+from html import escape
 
 import atexit
 import dis
 import logging
 import os
-import socket
 import sys
 import threading
 import time
@@ -95,7 +92,7 @@ for log_name in ("main", "trace", "ui", "ext", "bp"):
     logging.getLogger(logger_name).setLevel(getattr(logging, level, "WARNING"))
 
 
-class Wdb(object):
+class Wdb:
     """Wdb debugger main class"""
 
     _instances = {}
@@ -226,7 +223,7 @@ class Wdb(object):
             self.send("PING")
             self.send("PING")
             log.debug("[WDB CLIENT] Dual ping sent")
-        except socket.error as e:
+        except OSError as e:
             log.warning(f"Socket error on ping, connection lost retrying {e}")
             self._socket = None
             self.connected = False
@@ -243,7 +240,7 @@ class Wdb(object):
                 log.info(
                     "[WDB CLIENT] Connected socket on %s:%d" % (self.server, self.port)
                 )
-            except socket.error:
+            except OSError:
                 tries += 1
                 log.warning(
                     "You must start/install wdb.server "
@@ -740,16 +737,13 @@ class Wdb(object):
                     e,
                 )
 
-        return dict(
-            (
-                escape(key),
-                {
-                    "val": self.safe_better_repr(safe_getattr(key)),
-                    "type": type(safe_getattr(key)).__name__,
-                },
-            )
+        return {
+            escape(key): {
+                "val": self.safe_better_repr(safe_getattr(key)),
+                "type": type(safe_getattr(key)).__name__,
+            }
             for key in dir(thing)
-        )
+        }
 
     def get_file(self, filename):
         """Get file source from cache"""
@@ -1098,7 +1092,7 @@ def stop_trace(frame=None, close_on_exit=False):
     return wdb
 
 
-class trace(object):
+class trace:
     def __init__(self, **kwargs):
         """Make a tracing context with `with trace():`"""
         self.kwargs = kwargs

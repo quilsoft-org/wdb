@@ -1,4 +1,3 @@
-# *-* coding: utf-8 *-*
 # This file is part of wdb
 #
 # wdb Copyright (c) 2012-2016  Florian Mounier, Kozea
@@ -25,7 +24,7 @@ from tornado.util import unicode_type
 log = logging.getLogger("wdb_server")
 
 
-class BaseSockets(object):
+class BaseSockets:
     def __init__(self):
         self._sockets = {}
 
@@ -81,15 +80,15 @@ class BaseSockets(object):
 
 class Sockets(BaseSockets):
     def __init__(self):
-        super(Sockets, self).__init__()
+        super().__init__()
         self._filenames = {}
 
     def add(self, uuid, sck):
-        super(Sockets, self).add(uuid, sck)
+        super().add(uuid, sck)
         syncwebsockets.broadcast("AddSocket", {"uuid": uuid})
 
     def remove(self, uuid):
-        super(Sockets, self).remove(uuid)
+        super().remove(uuid)
         self._filenames.pop(uuid, None)
 
     def get_filename(self, uuid):
@@ -118,7 +117,7 @@ class WebSockets(BaseSockets):
             log.warning("Websocket is closed")
 
     def add(self, uuid, sck):
-        super(WebSockets, self).add(uuid, sck)
+        super().add(uuid, sck)
         syncwebsockets.broadcast("AddWebSocket", uuid)
 
 
@@ -128,7 +127,7 @@ class SyncWebSockets(WebSockets):
         super(WebSockets, self).add(uuid, sck)
 
 
-class Breakpoints(object):
+class Breakpoints:
     def __init__(self):
         self._breakpoints = []
 

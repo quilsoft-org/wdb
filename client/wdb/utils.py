@@ -1,6 +1,5 @@
 import dis
 import inspect
-import io
 import os
 import signal
 import sys
@@ -83,7 +82,7 @@ def get_doc(obj):
 def executable_line(line):
     line = line.strip()
     return not (
-        (not line or (line[0] == "#") or (line[:3] == '"""') or line[:3] == "'''")
+        not line or (line[0] == "#") or (line[:3] == '"""') or line[:3] == "'''"
     )
 
 
@@ -398,7 +397,7 @@ def search_value_in_obj(fun, obj, matches=None, path="", context=None):
     return matches
 
 
-class timeout_of(object):
+class timeout_of:
     def __init__(self, time, strict=False):
         self.time = time
         try:
@@ -429,7 +428,7 @@ class timeout_of(object):
         signal.signal(signal.SIGALRM, signal.SIG_IGN)
 
 
-class IterableEllipsis(object):
+class IterableEllipsis:
     def __init__(self, size):
         self.size = size
 
@@ -484,10 +483,10 @@ def inplace(
     backupfilename = filename + (backup_extension or os.extsep + "bak")
     try:
         os.unlink(backupfilename)
-    except os.error:
+    except OSError:
         pass
     os.rename(filename, backupfilename)
-    readable = io.open(
+    readable = open(
         backupfilename,
         mode,
         buffering=buffering,
@@ -498,7 +497,7 @@ def inplace(
     try:
         perm = os.fstat(readable.fileno()).st_mode
     except OSError:
-        writable = io.open(
+        writable = open(
             filename,
             "w" + mode.replace("r", ""),
             buffering=buffering,
@@ -511,7 +510,7 @@ def inplace(
         if hasattr(os, "O_BINARY"):
             os_mode |= os.O_BINARY
         fd = os.open(filename, os_mode, perm)
-        writable = io.open(
+        writable = open(
             fd,
             "w" + mode.replace("r", ""),
             buffering=buffering,
@@ -530,7 +529,7 @@ def inplace(
         # move backup back
         try:
             os.unlink(filename)
-        except os.error:
+        except OSError:
             pass
         os.rename(backupfilename, filename)
         raise
@@ -539,5 +538,5 @@ def inplace(
         writable.close()
         try:
             os.unlink(backupfilename)
-        except os.error:
+        except OSError:
             pass
