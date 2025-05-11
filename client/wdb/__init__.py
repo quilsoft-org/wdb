@@ -29,40 +29,40 @@ else:
 _initial_globals = dict(globals())
 
 
+import atexit
+import dis
+import logging
+import os
+import socket
+import sys
+import threading
+import time
+import webbrowser
+from collections import defaultdict
+from contextlib import contextmanager
+from functools import wraps
+from json import loads
+from json.decoder import JSONDecodeError
+from multiprocessing.connection import Client as Socket
+from threading import Thread
+from uuid import uuid4
+
 from .breakpoint import (
     Breakpoint,
-    LineBreakpoint,
     ConditionalBreakpoint,
     FunctionBreakpoint,
+    LineBreakpoint,
 )
-from json.decoder import JSONDecodeError
-from json import loads
-from collections import defaultdict
-from functools import wraps
+from .state import Next, Return, Running, Step, Until
 from .ui import Interaction, dump
 from .utils import (
-    pretty_frame,
+    IterableEllipsis,
+    cut_if_too_long,
     executable_line,
     get_args,
     get_source_from_byte_code,
-    cut_if_too_long,
-    IterableEllipsis,
+    pretty_frame,
 )
-from .state import Running, Step, Next, Until, Return
-from contextlib import contextmanager
-from uuid import uuid4
-from threading import Thread
-import dis
-import os
-import logging
-import sys
-import threading
-import socket
-import webbrowser
-import atexit
-import time
-import logging
-from multiprocessing.connection import Client as Socket
 
 try:
     import importmagic

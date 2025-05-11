@@ -1,7 +1,7 @@
-from wdb.ext import wdb_tornado
-
 import tornado.ioloop
 import tornado.web
+
+from wdb.ext import wdb_tornado
 
 
 class MainHandler(tornado.web.RequestHandler):

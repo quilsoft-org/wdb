@@ -4,9 +4,9 @@ import io
 import os
 import signal
 import sys
+from collections import OrderedDict
 from contextlib import contextmanager
 from difflib import HtmlDiff, _mdiff
-from collections import OrderedDict
 from importlib.util import find_spec
 
 

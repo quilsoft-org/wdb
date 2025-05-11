@@ -15,11 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
+import logging
+from struct import pack
+
 import tornado.options
 from tornado.util import unicode_type
-from struct import pack
-import logging
-import json
 
 log = logging.getLogger("wdb_server")
 

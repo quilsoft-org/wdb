@@ -1,14 +1,14 @@
+import json
+import logging
+import os
+import pickle
+import signal
+import sys
 from multiprocessing import Process
 from multiprocessing.connection import Listener
+
 from log_colorizer import get_color_logger
-from pytest import fixture
-from pytest import hookimpl
-import pickle
-import logging
-import signal
-import json
-import os
-import sys
+from pytest import fixture, hookimpl
 
 
 def u(s):

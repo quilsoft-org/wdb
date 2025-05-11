@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-from flask import Flask, request
 import logging
+
+from flask import Flask, request
+
 from wdb.ext import WdbMiddleware
 
 app = Flask(__name__)

@@ -1,7 +1,8 @@
 # *-* coding: utf-8 *-*
-from .conftest import use
 import json
 import os
+
+from .conftest import use
 
 
 def make_break(fn="movement.py", lno=None, cond=None, fun=None, temporary=False):

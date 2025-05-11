@@ -15,24 +15,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from . import (
-    trace,
-    start_trace,
-    stop_trace,
-    set_trace,
-    Wdb,
-    WEB_SERVER,
-    WEB_PORT,
-)
-from .ui import dump
-
+import sys
 import traceback
+from html import escape
+from socketserver import TCPServer
 from threading import current_thread
 from uuid import uuid4
-import sys
+
 import logger
-from socketserver import TCPServer
-from html import escape
+
+from . import (
+    WEB_PORT,
+    WEB_SERVER,
+    Wdb,
+    set_trace,
+    start_trace,
+    stop_trace,
+    trace,
+)
+from .ui import dump
 
 log = logger(__name__)
 _exc_cache = {}
@@ -237,13 +238,13 @@ class WdbMiddleware(object):
 
 
 def wdb_tornado(application, start_disabled=False):
+    from tornado.gen import coroutine
     from tornado.web import (
-        RequestHandler,
         ErrorHandler,
         HTTPError,
+        RequestHandler,
         StaticFileHandler,
     )
-    from tornado.gen import coroutine
 
     Wdb.enabled = not start_disabled
 
@@ -263,7 +264,7 @@ def wdb_tornado(application, start_disabled=False):
 
     @coroutine
     def _wdb_execute(*args, **kwargs):
-        from wdb import trace, Wdb
+        from wdb import Wdb, trace
 
         if Wdb.enabled:
             wdb = Wdb.get()

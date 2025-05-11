@@ -327,10 +327,10 @@ tornado.options.define(
 
 tornado.options.parse_command_line()
 
-from wdb_server.utils import (
-    refresh_process,
+from wdb_server.utils import (  # noqa isort:skip
     LibPythonWatcher,
-)  # noqa isort:skip
+    refresh_process,
+)
 
 StyleHandler.theme = tornado.options.options.theme
 

@@ -1,5 +1,5 @@
 # *-* coding: utf-8 *-*
-from .conftest import use, u
+from .conftest import u, use
 
 
 @use("movement.py")

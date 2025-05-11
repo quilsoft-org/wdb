@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from multiprocessing import Process, Lock
+from multiprocessing import Lock, Process
 from multiprocessing.connection import Listener
+
 import wdb
 
 pytest_plugins = ("pytester",)

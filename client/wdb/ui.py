@@ -1,4 +1,5 @@
 # *-* coding: utf-8 *-*
+import logging
 import os
 import re
 import sys
@@ -6,9 +7,14 @@ import time
 import token as tokens
 import traceback
 from base64 import b64encode
+from html import escape
+from io import StringIO
+from json import JSONEncoder, dumps
 from logging import WARNING
 from subprocess import Popen
 from tokenize import TokenError, generate_tokens
+from urllib.parse import quote
+
 from . import __version__, _initial_globals
 from .utils import (
     Html5Diff,
@@ -21,12 +27,6 @@ from .utils import (
     search_value_in_obj,
     timeout_of,
 )
-from json import JSONEncoder, dumps
-from io import StringIO
-from urllib.parse import quote
-from html import escape
-
-import logging
 
 log = logging.getLogger("wdb.ui")
 
