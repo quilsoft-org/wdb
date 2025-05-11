@@ -1,3 +1,4 @@
+import codecs
 import logging
 import os
 import re
@@ -8,7 +9,7 @@ import traceback
 from base64 import b64encode
 from html import escape
 from io import StringIO
-from json import JSONEncoder, dumps
+from json import JSONEncoder, dumps, loads
 from logging import WARNING
 from subprocess import Popen
 from tokenize import TokenError, generate_tokens
@@ -389,7 +390,8 @@ class Interaction:
             "Dump|%s"
             % dump(
                 {
-                    "for": u("%s ⟶ %s ") % (data, self.db.safe_repr(thing)),
+                    "for": ("%s ⟶ %s ").decode("utf-8")
+                    % (data, self.db.safe_repr(thing)),
                     "val": self.db.dmp(thing),
                     "doc": get_doc(thing),
                     "source": get_source(thing),
@@ -422,13 +424,13 @@ class Interaction:
                 append = False
             if redir and last_line:
                 indent = len(lines[-1]) - len(lines[-1].lstrip())
-                lines[-1] = indent * u(" ") + last_line
+                lines[-1] = indent * (" ").decode("utf-8") + last_line
                 raw_data = "\n".join(lines)
         data = raw_data
         # Keep spaces
-        raw_data = raw_data.replace(" ", u(" "))
+        raw_data = raw_data.replace(" ", " ".decode("utf-8"))
         # Compensate prompt for multi line
-        raw_data = raw_data.replace("\n", "\n" + u(" " * 4))
+        raw_data = raw_data.replace("\n", "\n" + (" " * 4).decode("utf-8"))
         duration = None
         with self.db.capture_output(with_hook=redir is None) as (out, err):
             compiled_code = None
@@ -719,6 +721,22 @@ class Interaction:
             self.notify_exc("Completion generation failed for %s" % data)
 
     def do_save(self, data):
+        def _detect_lines_encoding(lines):
+            """Esto fue traido de _compat"""
+            _cookie_search = re.compile(r"coding[:=]\s*([-\w.]+)").search
+
+            if not lines or lines[0].startswith("\xef\xbb\xbf".encode()):
+                return "utf-8"
+            magic = _cookie_search("".join(lines[:2]))
+            if magic is None:
+                return "utf-8"
+            encoding = magic.group(1)
+            try:
+                codecs.lookup(encoding)
+            except LookupError:
+                return "utf-8"
+            return encoding
+
         fn, src = data.split("|", 1)
         if not os.path.exists(fn):
             return
@@ -747,7 +765,37 @@ class Interaction:
         except Exception:
             self.fail("External open")
 
+    # def do_display(self, data):
+    #     if ";" in data:
+    #         mime, data = data.split(";", 1)
+    #         forced = True
+    #     else:
+    #         mime = "text/html"
+    #         forced = False
+
+    #     try:
+    #         thing = eval_(data, self.get_globals(), self.current_locals)
+    #     except Exception:
+    #         self.fail("Display")
+    #         return
+    #     else:
+    #         thing = thing.encode("utf-8") if isinstance(thing, str) else thing
+    #         if magic and not forced:
+    #             mime = magic.from_buffer(thing, mime=True)
+    #         self.db.send(
+    #             "Display|%s"
+    #             % dump(
+    #                 {
+    #                     "for": ("%s (%s)").encode('utf-8') % (data, mime),
+    #                     "val": from_bytes(b64encode(thing)),
+    #                     "type": mime,
+    #                 }
+    #             )
+    #         )
     def do_display(self, data):
+        """Mejorado con chat-gpt"""
+
+        # Detectar si hay un tipo MIME forzado
         if ";" in data:
             mime, data = data.split(";", 1)
             forced = True
@@ -755,25 +803,32 @@ class Interaction:
             mime = "text/html"
             forced = False
 
+        # Evaluar la expresión
         try:
-            thing = eval_(data, self.get_globals(), self.current_locals)
+            result = eval_(data, self.get_globals(), self.current_locals)
         except Exception:
             self.fail("Display")
             return
+
+        # Asegurarse de que sea bytes
+        if isinstance(result, str):
+            result_bytes = result.encode("utf-8")
         else:
-            thing = force_bytes(thing)
-            if magic and not forced:
-                mime = magic.from_buffer(thing, mime=True)
-            self.db.send(
-                "Display|%s"
-                % dump(
-                    {
-                        "for": u("%s (%s)") % (data, mime),
-                        "val": from_bytes(b64encode(thing)),
-                        "type": mime,
-                    }
-                )
-            )
+            result_bytes = result
+
+        # Si no está forzado, detectar MIME con magic (si está disponible)
+        if magic and not forced:
+            mime = magic.from_buffer(result_bytes, mime=True)
+
+        # Preparar el diccionario para enviar
+        display_data = {
+            "for": f"{data} ({mime})".encode(),
+            "val": b64encode(result_bytes).decode("utf-8"),
+            "type": mime,
+        }
+
+        # Enviar el mensaje
+        self.db.send("Display|%s" % dump(display_data))
 
     def do_disable(self, data):
         self.db.__class__.enabled = False

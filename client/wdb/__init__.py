@@ -13,6 +13,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+from collections import OrderedDict
+from io import StringIO
 
 try:
     import pkg_resources
@@ -25,8 +27,6 @@ else:
         __version__ = "wdb is not installed"
 
 _initial_globals = dict(globals())
-from html import escape
-
 import atexit
 import dis
 import logging
@@ -38,6 +38,7 @@ import webbrowser
 from collections import defaultdict
 from contextlib import contextmanager
 from functools import wraps
+from html import escape
 from json import loads
 from json.decoder import JSONDecodeError
 from multiprocessing.connection import Client as Socket
@@ -582,7 +583,7 @@ class Wdb:
                 dict_sorted = sorted
 
             dict_repr = "  " * (level - 1)
-            if type(obj) != dict:
+            if not isinstance(obj, dict):
                 dict_repr = type(obj).__name__ + "({"
                 closer = "})"
             else:
@@ -662,13 +663,13 @@ class Wdb:
             ]
         ):
             iter_repr = "  " * (level - 1)
-            if type(obj) == list:
+            if isinstance(obj, list):
                 iter_repr = "["
                 closer = "]"
-            elif type(obj) == set:
+            elif isinstance(obj, set):
                 iter_repr = "{"
                 closer = "}"
-            elif type(obj) == tuple:
+            elif isinstance(obj, tuple):
                 iter_repr = "("
                 closer = ")"
             else:
