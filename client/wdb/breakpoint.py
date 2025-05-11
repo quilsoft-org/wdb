@@ -2,7 +2,6 @@ import logging
 import os.path
 from hashlib import sha1
 from importlib import import_module
-from importlib.util import find_spec
 
 log = logging.getLogger("wdb.bp")
 

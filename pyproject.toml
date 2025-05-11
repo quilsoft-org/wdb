@@ -3,39 +3,3 @@ norecursedirs = [
     "server/node_modules",
     "server/build"
 ]
-
-[tool.flake8]
-exclude = [
-    ".venv",
-    "server/node_modules",
-    "server/build"
-]
-ignore = [
-    "E731",
-    "E402",
-    "W503",
-    "E203"
-]
-per-file-ignores = { "test/scripts/*.py" = ["ALL"] }
-
-[tool.black]
-line-length = 88
-target-version = ["py312"]
-exclude = '''
-/(
-    \.venv
-  | server/node_modules
-  | server/build
-)/
-'''
-
-[tool.isort]
-profile = "black"
-skip = [".venv", "server/node_modules", "server/build"]
-
-[tool.mypy]
-python_version = "3.12"
-ignore_missing_imports = true
-disallow_untyped_defs = false
-check_untyped_defs = true
-exclude = '(node_modules|\.venv|server/build)'

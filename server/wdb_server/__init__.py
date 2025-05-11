@@ -126,7 +126,6 @@ class BaseWebSocketHandler(tornado.websocket.WebSocketHandler):
 
         Does nothing by default.
         """
-        pass
 
 
 class WebSocketHandler(BaseWebSocketHandler):

@@ -24,15 +24,7 @@ from uuid import uuid4
 
 import logger
 
-from . import (
-    WEB_PORT,
-    WEB_SERVER,
-    Wdb,
-    set_trace,
-    start_trace,
-    stop_trace,
-    trace,
-)
+from . import WEB_PORT, WEB_SERVER, Wdb, set_trace, start_trace, stop_trace, trace
 from .ui import dump
 
 log = logger(__name__)
@@ -239,12 +231,7 @@ class WdbMiddleware(object):
 
 def wdb_tornado(application, start_disabled=False):
     from tornado.gen import coroutine
-    from tornado.web import (
-        ErrorHandler,
-        HTTPError,
-        RequestHandler,
-        StaticFileHandler,
-    )
+    from tornado.web import ErrorHandler, HTTPError, RequestHandler, StaticFileHandler
 
     Wdb.enabled = not start_disabled
 

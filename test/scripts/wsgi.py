@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 
 def make_error():
-    import whatever
+    pass
 
 
 def relay_error():
@@ -87,7 +87,6 @@ def multipart_post():
 
 @app.route("/post/test", methods=("POST",))
 def post_test():
-    a = 2
     import wdb
 
     wdb.set_trace()
@@ -146,7 +145,7 @@ def lambda_():
 
 @app.route("/import")
 def import_():
-    import importtest
+    pass
 
 
 # @app.route("/favicon.ico")

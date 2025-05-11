@@ -1,6 +1,6 @@
 import sys
 
-from setuptools import find_packages, setup
+from setuptools import setup
 
 single_version = "--single-version-externally-managed"
 if single_version in sys.argv:

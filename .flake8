@@ -1,0 +1,13 @@
+[flake8]
+exclude =
+    .venv,
+    server/node_modules,
+    server/build
+
+extend-ignore =
+    E731,
+    E402,
+    W503,
+    E203
+
+per-file-ignores = test/scripts/*.py:ALL
