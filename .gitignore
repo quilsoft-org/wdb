@@ -17,3 +17,4 @@ coverage-py*
 .venv
 make.sh
 __pycache__/
+.vscode

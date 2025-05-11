@@ -841,7 +841,7 @@ class Wdb:
                     log.info("Connection timeouted")
                     return "Quit"
 
-            data = self._socket.recv_bytes()
+            data = self._socket.recv_bytes(4096)
             log.info(f"Receiving receive()__init__py:857 {data}")
         except Exception as e:
             log.error(f"Connection lost {e}", exc_info=True)
