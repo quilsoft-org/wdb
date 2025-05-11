@@ -1,3 +1,10 @@
+# 3.3.1
+- Actualizar la imagen de wdb con python 3.12.3
+- Actualizar todoas las librerias a su ultima version
+- Eliminar compatiblidad don python 2.0
+- Eliminar setup.cfg en el archivo raiz cambiandolo por pyproject.toml mas moderno
+- Agregar chequeos estáticos con black, isort y mypy
+
 # 3.3.0
 
 - Fix crash on startup
