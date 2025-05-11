@@ -885,7 +885,8 @@ class Interaction:
             else str
         )
         strings = [
-            render(string) if not is_str(string) else string for string in strings
+            render(string) if not isinstance(string, str) else string
+            for string in strings
         ]
         self.db.send(
             "RawHTML|%s"
