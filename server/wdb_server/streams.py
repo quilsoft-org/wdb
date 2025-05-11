@@ -18,6 +18,7 @@ import json
 from functools import partial
 from logging import getLogger
 from struct import unpack
+from socket import error as socket_error, timeout as socket_timeout
 
 from tornado.iostream import IOStream, StreamClosedError
 from tornado.options import options
@@ -94,15 +95,28 @@ def read_uuid_size(stream, length):
     except StreamClosedError:
         log.warning("Stream cerrado antes de recibir UUID completo")
 
-
-def handle_connection(connection, address):
-    log.info("Connection received from %s" % str(address))
-    stream = IOStream(connection, max_buffer_size=1024 * 1024 * 1024)
-    # Getting uuid
+def handle_connection(conn, address):
+    conn.setblocking(False)
     try:
-        log.debug("Esperando UUID completo...")
-        stream.read_bytes(4, partial(read_uuid_size, stream))
-    except StreamClosedError:
-        log.warning("Closed stream for getting uuid length")
-    except Exception as e:
-        log.error(f"Unexpected error reading UUID size: {e}")
+        while True:
+            data = conn.recv(4096)
+            if not data:
+                break
+            # Procesar comandos (ej: if data == b"PING\n": conn.sendall(b"PONG\n"))
+    except (socket_error, ConnectionResetError) as e:
+        log.error(f"Client {address} disconnected: {e}")
+    finally:
+        conn.close()
+
+# version con multithreadin sockets
+# def handle_connection(connection, address):
+#     log.info("Connection received from %s" % str(address))
+#     stream = IOStream(connection, max_buffer_size=1024 * 1024 * 1024)
+#     # Getting uuid
+#     try:
+#         log.debug("Esperando UUID completo...")
+#         stream.read_bytes(4, partial(read_uuid_size, stream))
+#     except StreamClosedError:
+#         log.warning("Closed stream for getting uuid length")
+#     except Exception as e:
+#         log.error(f"Unexpected error reading UUID size: {e}")

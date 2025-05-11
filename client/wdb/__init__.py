@@ -15,6 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from collections import OrderedDict
 from io import StringIO
+import socket
+from socket import error as socket_error, timeout as socket_timeout
 
 try:
     import pkg_resources
@@ -232,30 +234,46 @@ class Wdb:
             self.connect()
 
     def connect(self):
-        """Connect to wdb server"""
+        """Nueva versión con socket estándar"""
         tries = 0
         while not self._socket and tries < 10:
             try:
                 time.sleep(0.2 * tries)
-                self._socket = Socket((self.server, self.port))
-                log.info(
-                    "[WDB CLIENT] Connected socket on %s:%d" % (self.server, self.port)
-                )
-            except OSError:
+                self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self._socket.connect((self.server, self.port))
+                log.info(f"Connected to {self.server}:{self.port}")
+            except (socket.error, ConnectionRefusedError) as e:
                 tries += 1
-                log.warning(
-                    "You must start/install wdb.server "
-                    "(Retrying on %s:%d) [Try #%d/10]" % (self.server, self.port, tries)
-                )
+                log.warning(f"Connection failed (try {tries}/10): {e}")
                 self._socket = None
 
-        if not self._socket:
-            log.warning("Could not connect to server")
-            return
 
-        Wdb._sockets.append(self._socket)
-        log.info(f"[WDB CLIENT] sending bytes 1 {self.uuid.encode('utf-8')}")
-        self._socket.send_bytes(self.uuid.encode("utf-8"))
+    # version con sockets multiprocessing
+    # def connect(self):
+    #     """Connect to wdb server"""
+    #     tries = 0
+    #     while not self._socket and tries < 10:
+    #         try:
+    #             time.sleep(0.2 * tries)
+    #             self._socket = Socket((self.server, self.port))
+    #             log.info(
+    #                 "[WDB CLIENT] Connected socket on %s:%d" % (self.server, self.port)
+    #             )
+    #         except OSError:
+    #             tries += 1
+    #             log.warning(
+    #                 "You must start/install wdb.server "
+    #                 "(Retrying on %s:%d) [Try #%d/10]" % (self.server, self.port, tries)
+    #             )
+    #             self._socket = None
+
+    #     if not self._socket:
+    #         log.warning("Could not connect to server")
+    #         return
+
+    #     Wdb._sockets.append(self._socket)
+    #     log.info(f"[WDB CLIENT] sending bytes 1 {self.uuid.encode('utf-8')}")
+    #     self._socket.send_bytes(self.uuid.encode("utf-8"))
 
     def get_breakpoints(self):
         log.info("[WDB CLIENT] Entering get_breakpoints")
@@ -820,34 +838,58 @@ class Wdb:
         return stack, frames, current
 
     def send(self, data):
-        """Send data through websocket"""
-        log.info(f"[WDB CLIENT] Sending form send()__init__py:843 {data}")
+        """Envía datos como texto + salto de línea"""
         if not self._socket:
-            log.warning("No connection")
-            return
-        log.info(f"[WDB CLIENT] sending bytes 2 {data.encode('utf-8')}")
-        self._socket.send_bytes(data.encode("utf-8"))
-
-    def receive(self, timeout=None):
-        """Receive data through websocket"""
-        log.info("Entering receive():845")
-        if not self._socket:
-            log.warning("No connection")
+            log.warning("No active socket")
             return
         try:
-            if timeout:
-                rv = self._socket.poll(timeout)
-                if not rv:
-                    log.info("Connection timeouted")
-                    return "Quit"
+            self._socket.sendall(f"{data}\n".encode('utf-8'))
+        except (socket.error, BrokenPipeError) as e:
+            log.error(f"Send failed: {e}")
+            self._socket = None
 
-            data = self._socket.recv_bytes(4096)
-            log.info(f"Receiving receive()__init__py:857 {data}")
-        except Exception as e:
-            log.error(f"Connection lost {e}", exc_info=True)
+    # version con los multithreaded
+    # def send(self, data):
+    #     """Send data through websocket"""
+    #     log.info(f"[WDB CLIENT] Sending form send()__init__py:843 {data}")
+    #     if not self._socket:
+    #         log.warning("No connection")
+    #         return
+    #     log.info(f"[WDB CLIENT] sending bytes 2 {data.encode('utf-8')}")
+    #     self._socket.send_bytes(data.encode("utf-8"))
+
+    def receive(self, timeout=None):
+        """Lee datos con buffer de 4096 bytes"""
+        if not self._socket:
             return "Quit"
-        log.info("Got %s" % data)
-        return data.decode("utf-8")
+        try:
+            data = self._socket.recv(4096)
+            return data.decode('utf-8').strip() if data else "Quit"
+        except (socket.error, ConnectionResetError) as e:
+            log.error(f"Receive failed: {e}")
+            return "Quit"
+
+    # version con los multithreaded
+    # def receive(self, timeout=None):
+    #     """Receive data through websocket"""
+    #     log.info("Entering receive():845")
+    #     if not self._socket:
+    #         log.warning("No connection")
+    #         return
+    #     try:
+    #         if timeout:
+    #             rv = self._socket.poll(timeout)
+    #             if not rv:
+    #                 log.info("Connection timeouted")
+    #                 return "Quit"
+
+    #         data = self._socket.recv_bytes(4096)
+    #         log.info(f"Receiving receive()__init__py:857 {data}")
+    #     except Exception as e:
+    #         log.error(f"Connection lost {e}", exc_info=True)
+    #         return "Quit"
+    #     log.info("Got %s" % data)
+    #     return data.decode("utf-8")
 
     def open_browser(self, type_="debug"):
         if not self.connected:
