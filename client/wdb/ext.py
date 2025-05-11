@@ -63,13 +63,13 @@ def post_mortem_interaction(uuid, exc_info):
         _value = type_(value)
 
     wdb.obj_cache[id(exc_info)] = exc_info
-    wdb.extra_vars['__exception__'] = exc_info
+    wdb.extra_vars["__exception__"] = exc_info
     exception = type_.__name__
-    exception_description = str(value) + ' [POST MORTEM]'
-    init = 'Echo|%s' % dump(
+    exception_description = str(value) + " [POST MORTEM]"
+    init = "Echo|%s" % dump(
         {
-            'for': '__exception__',
-            'val': escape('%s: %s') % (exception, exception_description),
+            "for": "__exception__",
+            "val": escape("%s: %s") % (exception, exception_description),
         }
     )
 
@@ -86,18 +86,18 @@ def post_mortem_interaction(uuid, exc_info):
 
 def _handle_off(silent=False):
     if not silent:
-        log.exception('Exception with wdb off')
+        log.exception("Exception with wdb off")
 
     uuid = str(uuid4())
     _exc_cache[current_thread()] = (uuid, sys.exc_info())
 
-    web_url = 'http://%s:%d/pm/session/%s' % (
-        WEB_SERVER or 'localhost',
+    web_url = "http://%s:%d/pm/session/%s" % (
+        WEB_SERVER or "localhost",
         WEB_PORT or 1984,
         uuid,
     )
     return (
-        '''<!DOCTYPE html>
+        """<!DOCTYPE html>
         <html>
             <head>
                 <title>WDB Post Mortem</title>
@@ -135,9 +135,9 @@ def _handle_off(silent=False):
                 </iframe>
             </body>
         </html>
-    '''
+    """
         % (traceback.format_exc(), web_url)
-    ).encode('utf-8')
+    ).encode("utf-8")
 
 
 class WdbMiddleware(object):
@@ -147,27 +147,27 @@ class WdbMiddleware(object):
         Wdb.enabled = not start_disabled
 
     def __call__(self, environ, start_response):
-        path = environ.get('PATH_INFO', '')
-        if path == '/__wdb/on':
+        path = environ.get("PATH_INFO", "")
+        if path == "/__wdb/on":
             # Enable wdb
             Wdb.enabled = True
-            start_response('200 OK', [('Content-Type', 'text/html')])
-            return ('Wdb is now on'.encode('utf-8'),)
+            start_response("200 OK", [("Content-Type", "text/html")])
+            return ("Wdb is now on".encode("utf-8"),)
 
-        if path == '/__wdb/shell':
+        if path == "/__wdb/shell":
 
             def f():
                 # Enable wdb
                 wdb = Wdb.get()
                 Wdb.enabled = True
                 start_response(
-                    '200 OK',
-                    [('Content-Type', 'text/html'), ('X-Thing', wdb.uuid)],
+                    "200 OK",
+                    [("Content-Type", "text/html"), ("X-Thing", wdb.uuid)],
                 )
-                yield (' ' * 4096).encode('utf-8')
+                yield (" " * 4096).encode("utf-8")
                 wdb = set_trace()
                 wdb.die()
-                yield 'Exited'.encode('utf-8')
+                yield "Exited".encode("utf-8")
 
             return f()
         if Wdb.enabled:
@@ -185,21 +185,21 @@ class WdbMiddleware(object):
                     exc_info = sys.exc_info()
                     try:
                         start_response(
-                            '500 INTERNAL SERVER ERROR',
-                            [('Content-Type', 'text/html')],
+                            "500 INTERNAL SERVER ERROR",
+                            [("Content-Type", "text/html")],
                         )
                     except AssertionError:
                         log.exception(
-                            'Exception with wdb off and headers already set',
+                            "Exception with wdb off and headers already set",
                             exc_info=exc_info,
                         )
-                        yield '\n'.join(
-                            traceback.format_exception(*exc_info)
-                        ).replace('\n', '\n<br>\n').encode('utf-8')
+                        yield "\n".join(traceback.format_exception(*exc_info)).replace(
+                            "\n", "\n<br>\n"
+                        ).encode("utf-8")
                     else:
                         yield _handle_off()
                 finally:
-                    hasattr(appiter, 'close') and appiter.close()
+                    hasattr(appiter, "close") and appiter.close()
                 wdb.closed = False
 
             return trace_wsgi(environ, start_response)
@@ -215,23 +215,23 @@ class WdbMiddleware(object):
                 exc_info = sys.exc_info()
                 try:
                     start_response(
-                        '500 INTERNAL SERVER ERROR',
-                        [('Content-Type', 'text/html')],
+                        "500 INTERNAL SERVER ERROR",
+                        [("Content-Type", "text/html")],
                     )
                 except AssertionError:
                     log.exception(
-                        'Exception with wdb off and headers already set',
+                        "Exception with wdb off and headers already set",
                         exc_info=exc_info,
                     )
-                    yield '\n'.join(
-                        traceback.format_exception(*exc_info)
-                    ).replace('\n', '\n<br>\n').encode('utf-8')
+                    yield "\n".join(traceback.format_exception(*exc_info)).replace(
+                        "\n", "\n<br>\n"
+                    ).encode("utf-8")
                 else:
                     yield _handle_off()
             finally:
                 # Close set_trace debuggers
                 stop_trace(close_on_exit=True)
-                hasattr(appiter, 'close') and appiter.close()
+                hasattr(appiter, "close") and appiter.close()
 
         return catch(environ, start_response)
 
@@ -250,18 +250,16 @@ def wdb_tornado(application, start_disabled=False):
     class WdbOn(RequestHandler):
         def get(self):
             Wdb.enabled = True
-            self.write('Wdb is now on')
+            self.write("Wdb is now on")
 
     class WdbOff(RequestHandler):
         def get(self):
             Wdb.enabled = False
-            self.write('Wdb is now off')
+            self.write("Wdb is now off")
 
-    application.add_handlers(
-        r'.*', ((r'/__wdb/on', WdbOn), (r'/__wdb/off', WdbOff))
-    )
+    application.add_handlers(r".*", ((r"/__wdb/on", WdbOn), (r"/__wdb/off", WdbOff)))
     old_execute = RequestHandler._execute
-    under = getattr(RequestHandler._execute, '__wrapped__', None)
+    under = getattr(RequestHandler._execute, "__wrapped__", None)
 
     @coroutine
     def _wdb_execute(*args, **kwargs):
@@ -277,7 +275,7 @@ def wdb_tornado(application, start_disabled=False):
         elif (
             len(args) > 2
             and isinstance(args[0], StaticFileHandler)
-            and args[2] == 'favicon.ico'
+            and args[2] == "favicon.ico"
         ):
             interesting = False
 
@@ -297,7 +295,7 @@ def wdb_tornado(application, start_disabled=False):
 
     def _wdb_error_writter(self, status_code, **kwargs):
         silent = False
-        ex = kwargs.get('exc_info')
+        ex = kwargs.get("exc_info")
         if ex:
             silent = issubclass(ex[0], HTTPError)
         self.finish(_handle_off(silent=silent))
@@ -326,7 +324,7 @@ def add_w_builtin():
         def trace(self):
             trace(sys._getframe().f_back)
 
-    __builtins__['w'] = w()
+    __builtins__["w"] = w()
 
 
 def patch_werkzeug():

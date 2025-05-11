@@ -6,7 +6,7 @@ class A(object):
         self.n = n
 
     def __repr__(self):
-        return '<A object with n=%d>' % self.n
+        return "<A object with n=%d>" % self.n
 
 
 def create_a(n):
@@ -28,5 +28,6 @@ def work():
     b = create_a(2)
     a, b, c = combine(a, b)
     display(a, b, wdb, c=c, cls=A, obj=object)
+
 
 work()

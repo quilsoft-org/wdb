@@ -12,7 +12,7 @@ class State(object):
             return self.frame is None
 
     def __repr__(self):
-        return '<State is %s for %s>' % (
+        return "<State is %s for %s>" % (
             self.__class__.__name__,
             pretty_frame(self.frame),
         )
@@ -54,4 +54,4 @@ class Return(Next):
     """Returning state: Stop on return event if same frame"""
 
     def stops(self, frame, event):
-        return self.frame == frame and event == 'return'
+        return self.frame == frame and event == "return"

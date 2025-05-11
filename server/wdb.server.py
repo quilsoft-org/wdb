@@ -10,7 +10,7 @@ from tornado_systemd import SYSTEMD_SOCKET_FD, SystemdHTTPServer
 from wdb_server import server
 from wdb_server.streams import handle_connection
 
-log = getLogger('wdb_server')
+log = getLogger("wdb_server")
 if options.debug:
     log.setLevel(INFO)
     if options.more:
@@ -18,8 +18,8 @@ if options.debug:
 else:
     log.setLevel(WARNING)
 
-if os.getenv('LISTEN_PID'):
-    log.info('Getting socket from systemd')
+if os.getenv("LISTEN_PID"):
+    log.info("Getting socket from systemd")
     sck = socket.fromfd(
         SYSTEMD_SOCKET_FD + 1,  # Second socket in .socket file
         socket.AF_INET6 if socket.has_ipv6 else socket.AF_INET,
@@ -29,19 +29,19 @@ if os.getenv('LISTEN_PID'):
     sck.listen(128)
     sockets = [sck]
 else:
-    log.info('Binding sockets')
+    log.info("Binding sockets")
     sockets = bind_sockets(options.socket_port)
 
-log.info('Accepting')
+log.info("Accepting")
 for sck in sockets:
     add_accept_handler(sck, handle_connection)
 
-log.info('Listening')
+log.info("Listening")
 http_server = SystemdHTTPServer(server)
 http_server.listen(options.server_port)
 
-log.info('Starting loop')
-log.info('log en info')
-log.warning('log en warning')
-log.debug('log en debug')
+log.info("Starting loop")
+log.info("log en info")
+log.warning("log en warning")
+log.debug("log en debug")
 IOLoop.current().start()

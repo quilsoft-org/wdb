@@ -1,4 +1,5 @@
 """Wdb plugin for pytest."""
+
 import wdb
 
 
@@ -12,8 +13,8 @@ def pytest_addoption(parser):
 
 def pytest_configure(config):
     if config.option.wdb:
-        config.pluginmanager.register(Trace(), '_wdb')
-        config.pluginmanager.unregister(name='pdb')
+        config.pluginmanager.register(Trace(), "_wdb")
+        config.pluginmanager.unregister(name="pdb")
 
 
 class Trace(object):

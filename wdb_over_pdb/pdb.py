@@ -12,10 +12,10 @@ def import_from_stdlib(name):
     import code  # arbitrary module which stays in the same dir as pdb
 
     stdlibdir, _ = os.path.split(code.__file__)
-    pyfile = os.path.join(stdlibdir, name + '.py')
+    pyfile = os.path.join(stdlibdir, name + ".py")
     result = types.ModuleType(name)
-    exec(compile(open(pyfile).read(), pyfile, 'exec'), result.__dict__)
+    exec(compile(open(pyfile).read(), pyfile, "exec"), result.__dict__)
     return result
 
 
-old = import_from_stdlib('pdb')
+old = import_from_stdlib("pdb")

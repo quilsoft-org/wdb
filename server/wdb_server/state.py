@@ -21,7 +21,7 @@ from struct import pack
 import logging
 import json
 
-log = logging.getLogger('wdb_server')
+log = logging.getLogger("wdb_server")
 
 
 class BaseSockets(object):
@@ -30,14 +30,14 @@ class BaseSockets(object):
 
     def send(self, uuid, data, message=None):
         if message:
-            data = data + '|' + json.dumps(message)
+            data = data + "|" + json.dumps(message)
         if isinstance(data, unicode_type):
-            data = data.encode('utf-8')
+            data = data.encode("utf-8")
         sck = self.get(uuid)
         if sck:
             self._send(sck, data)
         else:
-            log.warning('No socket found for %s' % uuid)
+            log.warning("No socket found for %s" % uuid)
 
     def get(self, uuid):
         return self._sockets.get(uuid)
@@ -45,10 +45,10 @@ class BaseSockets(object):
     def broadcast(self, cmd, message=None):
         for uuid in list(self._sockets.keys()):
             try:
-                log.debug('Broadcast to socket %s' % uuid)
+                log.debug("Broadcast to socket %s" % uuid)
                 self.send(uuid, cmd, message)
             except Exception:
-                log.warning('Failed broadcast to socket %s' % uuid)
+                log.warning("Failed broadcast to socket %s" % uuid)
                 self.close(uuid)
                 self.remove(uuid)
 
@@ -63,7 +63,7 @@ class BaseSockets(object):
         sck = self._sockets.pop(uuid, None)
         if sck:
             syncwebsockets.broadcast(
-                'Remove' + self.__class__.__name__.rstrip('s'), uuid
+                "Remove" + self.__class__.__name__.rstrip("s"), uuid
             )
 
     def close(self, uuid):
@@ -71,7 +71,7 @@ class BaseSockets(object):
         try:
             sck.close()
         except Exception:
-            log.warning('Failed close to socket %s' % uuid)
+            log.warning("Failed close to socket %s" % uuid)
 
     @property
     def uuids(self):
@@ -85,24 +85,22 @@ class Sockets(BaseSockets):
 
     def add(self, uuid, sck):
         super(Sockets, self).add(uuid, sck)
-        syncwebsockets.broadcast('AddSocket', {'uuid': uuid})
+        syncwebsockets.broadcast("AddSocket", {"uuid": uuid})
 
     def remove(self, uuid):
         super(Sockets, self).remove(uuid)
         self._filenames.pop(uuid, None)
 
     def get_filename(self, uuid):
-        return self._filenames.get(uuid, '')
+        return self._filenames.get(uuid, "")
 
     def set_filename(self, uuid, filename):
         self._filenames[uuid] = filename
         syncwebsockets.broadcast(
-            'AddSocket',
+            "AddSocket",
             {
-                'uuid': uuid,
-                'filename': (
-                    filename if tornado.options.options.show_filename else ''
-                ),
+                "uuid": uuid,
+                "filename": (filename if tornado.options.options.show_filename else ""),
             },
         )
 
@@ -116,11 +114,11 @@ class WebSockets(BaseSockets):
         if sck.ws_connection:
             sck.write_message(data)
         else:
-            log.warning('Websocket is closed')
+            log.warning("Websocket is closed")
 
     def add(self, uuid, sck):
         super(WebSockets, self).add(uuid, sck)
-        syncwebsockets.broadcast('AddWebSocket', uuid)
+        syncwebsockets.broadcast("AddWebSocket", uuid)
 
 
 class SyncWebSockets(WebSockets):
@@ -136,12 +134,12 @@ class Breakpoints(object):
     def add(self, brk):
         if brk not in self._breakpoints:
             self._breakpoints.append(brk)
-            syncwebsockets.broadcast('AddBreak|' + json.dumps(brk))
+            syncwebsockets.broadcast("AddBreak|" + json.dumps(brk))
 
     def remove(self, brk):
         if brk in self._breakpoints:
             self._breakpoints.remove(brk)
-            syncwebsockets.broadcast('RemoveBreak|' + json.dumps(brk))
+            syncwebsockets.broadcast("RemoveBreak|" + json.dumps(brk))
 
     def get(self):
         return self._breakpoints

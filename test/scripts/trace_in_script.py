@@ -1,5 +1,3 @@
-
-
 def fun1(a):
     b = 4
     c = a + b
@@ -10,6 +8,7 @@ def fun1(a):
 
 def fun2(l):
     import wdb
+
     wdb.set_trace()
     a = 2
     e = fun1(a)
@@ -22,5 +21,6 @@ def main():
 
 main()
 import wdb
+
 wdb.set_trace()
-print('The end')
+print("The end")

@@ -9,7 +9,7 @@ class MainHandler(tornado.web.RequestHandler):
         a = 2
         b = -2
         c = 1 / (a + b) < 0  # <strong> Err œ
-        print(c <b> a)
+        print(c < b > a)
         relay_error()
         self.write("Hello, world")
 
@@ -20,9 +20,12 @@ class OkHandler(tornado.web.RequestHandler):
 
 
 def make_app():
-    return tornado.web.Application([
-        (r"/", MainHandler),
-    ])
+    return tornado.web.Application(
+        [
+            (r"/", MainHandler),
+        ]
+    )
+
 
 if __name__ == "__main__":
     app = make_app()

@@ -38,7 +38,7 @@ def one_more_step(fun, below):
 # below = 1 so in trace exception should be ignored
 with trace(below=1):
     try:
-        raise Exception('Catched Exception')
+        raise Exception("Catched Exception")
     except Exception:
         pass
 
@@ -64,7 +64,7 @@ with trace(below=1):
 # This should not stop neither
 with trace(below=2):
     try:
-        raise Exception('Catched Exception')
+        raise Exception("Catched Exception")
     except Exception:
         pass
 

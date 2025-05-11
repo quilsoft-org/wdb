@@ -37,7 +37,7 @@ def one_more_step(fun, below):
 # This should not stop
 with trace(under=uninteresting_function):
     try:
-        raise Exception('Catched Exception')
+        raise Exception("Catched Exception")
     except Exception:
         pass
 

@@ -25,7 +25,7 @@ from tornado.ioloop import IOLoop
 from tornado.options import options
 from wdb_server.state import syncwebsockets
 
-log = getLogger('wdb_server')
+log = getLogger("wdb_server")
 log.setLevel(10 if options.debug else 30)
 
 ioloop = IOLoop.current()
@@ -39,33 +39,33 @@ else:
     class LibPythonWatcher(object):
         def __init__(self, extra_search_path=None):
             inotify = pyinotify.WatchManager()
-            self.files = glob('/usr/lib/libpython*')
+            self.files = glob("/usr/lib/libpython*")
             if not self.files:
-                self.files = glob('/lib/libpython*')
+                self.files = glob("/lib/libpython*")
 
             if extra_search_path is not None:
                 # Handle custom installation paths
                 for root, dirnames, filenames in os.walk(extra_search_path):
-                    for filename in fnmatch.filter(filenames, 'libpython*'):
+                    for filename in fnmatch.filter(filenames, "libpython*"):
                         self.files.append(os.path.join(root, filename))
 
-            log.debug('Watching for %s' % self.files)
+            log.debug("Watching for %s" % self.files)
             self.notifier = pyinotify.TornadoAsyncNotifier(
                 inotify, ioloop, self.notified, pyinotify.ProcessEvent()
             )
             inotify.add_watch(
                 self.files,
-                pyinotify.EventsCodes.ALL_FLAGS['IN_OPEN']
-                | pyinotify.EventsCodes.ALL_FLAGS['IN_CLOSE_NOWRITE'],
+                pyinotify.EventsCodes.ALL_FLAGS["IN_OPEN"]
+                | pyinotify.EventsCodes.ALL_FLAGS["IN_CLOSE_NOWRITE"],
             )
 
         def notified(self, notifier):
-            log.debug('Got notified for %s' % self.files)
+            log.debug("Got notified for %s" % self.files)
             refresh_process()
-            log.debug('Process refreshed')
+            log.debug("Process refreshed")
 
         def close(self):
-            log.debug('Closing for %s' % self.files)
+            log.debug("Closing for %s" % self.files)
             self.notifier.stop()
 
 
@@ -90,9 +90,9 @@ def refresh_process(uuid=None):
             if len(cl) == 0:
                 continue
 
-        binary = cl[0].split('/')[-1]
+        binary = cl[0].split("/")[-1]
         if (
-            ('python' in binary or 'pypy' in binary)
+            ("python" in binary or "pypy" in binary)
             and proc.is_running()
             and proc.status() != psutil.STATUS_ZOMBIE
         ):
@@ -100,26 +100,26 @@ def refresh_process(uuid=None):
                 try:
                     cpu = proc.cpu_percent(interval=0.01)
                     send(
-                        'AddProcess',
+                        "AddProcess",
                         {
-                            'pid': proc.pid,
-                            'user': proc.username(),
-                            'cmd': ' '.join(proc.cmdline()),
-                            'threads': proc.num_threads(),
-                            'time': proc.create_time(),
-                            'mem': proc.memory_percent(),
-                            'cpu': cpu,
+                            "pid": proc.pid,
+                            "user": proc.username(),
+                            "cmd": " ".join(proc.cmdline()),
+                            "threads": proc.num_threads(),
+                            "time": proc.create_time(),
+                            "mem": proc.memory_percent(),
+                            "cpu": cpu,
                         },
                     )
                     remaining_pids.append(proc.pid)
                     for thread in proc.threads():
-                        send('AddThread', {'id': thread.id, 'of': proc.pid})
+                        send("AddThread", {"id": thread.id, "of": proc.pid})
                         remaining_tids.append(thread.id)
                 except psutil.NoSuchProcess:
                     pass
             except Exception:
-                log.warning('', exc_info=True)
+                log.warning("", exc_info=True)
                 continue
 
-    send('KeepProcess', remaining_pids)
-    send('KeepThreads', remaining_tids)
+    send("KeepProcess", remaining_pids)
+    send("KeepThreads", remaining_tids)
