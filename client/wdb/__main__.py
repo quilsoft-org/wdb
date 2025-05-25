@@ -2,7 +2,6 @@ import argparse
 import os
 import sys
 
-from wdb import Wdb
 
 parser = argparse.ArgumentParser(description="Wdb, the web python debugger.")
 parser.add_argument(

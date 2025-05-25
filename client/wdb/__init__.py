@@ -225,7 +225,7 @@ class Wdb:
             # Sending PING twice
             self.send("PING")
             self.send("PING")
-            log.debug("[WDB CLIENT] Dual ping sent")
+            log.info("[WDB CLIENT1] Dual ping sent")
         except OSError as e:
             log.warning(f"Socket error on ping, connection lost retrying {e}")
             self._socket = None
@@ -233,64 +233,51 @@ class Wdb:
             self.begun = False
             self.connect()
 
+
     def connect(self):
-        """Nueva versión con socket estándar"""
+        """Connect to wdb server"""
         tries = 0
         while not self._socket and tries < 10:
             try:
                 time.sleep(0.2 * tries)
-                self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                self._socket.connect((self.server, self.port))
-                log.info(f"Connected to {self.server}:{self.port}")
-            except (socket.error, ConnectionRefusedError) as e:
+                self._socket = Socket((self.server, self.port))
+                log.info(
+                    "[WDB CLIENT2] Connected socket on %s:%d" % (self.server, self.port)
+                )
+            except OSError:
                 tries += 1
-                log.warning(f"Connection failed (try {tries}/10): {e}")
+                log.warning(
+                    "You must start/install wdb.server "
+                    "(Retrying on %s:%d) [Try #%d/10]" % (self.server, self.port, tries)
+                )
                 self._socket = None
 
+        if not self._socket:
+            log.warning("Could not connect to server")
+            return
 
-    # version con sockets multiprocessing
-    # def connect(self):
-    #     """Connect to wdb server"""
-    #     tries = 0
-    #     while not self._socket and tries < 10:
-    #         try:
-    #             time.sleep(0.2 * tries)
-    #             self._socket = Socket((self.server, self.port))
-    #             log.info(
-    #                 "[WDB CLIENT] Connected socket on %s:%d" % (self.server, self.port)
-    #             )
-    #         except OSError:
-    #             tries += 1
-    #             log.warning(
-    #                 "You must start/install wdb.server "
-    #                 "(Retrying on %s:%d) [Try #%d/10]" % (self.server, self.port, tries)
-    #             )
-    #             self._socket = None
-
-    #     if not self._socket:
-    #         log.warning("Could not connect to server")
-    #         return
-
-    #     Wdb._sockets.append(self._socket)
-    #     log.info(f"[WDB CLIENT] sending bytes 1 {self.uuid.encode('utf-8')}")
-    #     self._socket.send_bytes(self.uuid.encode("utf-8"))
+        Wdb._sockets.append(self._socket)
+        log.info(f"[WDB CLIENT3] sending bytes 1 {self.uuid.encode('utf-8')}")
+        self._socket.send_bytes(self.uuid.encode("utf-8"))
 
     def get_breakpoints(self):
-        log.info("[WDB CLIENT] Entering get_breakpoints")
-        self.send("ServerBreaks")
-        breaks = self.receive()
-        log.info(f"[WDB CLIENT] receinving breaks {breaks}")
-        try:
-            breaks = loads(breaks)
-        except JSONDecodeError as e:
-            breaks = []
-            log.error(f"[WDB CLIENT] {e}")
-        self._init_breakpoints = breaks
-
-        for brk in breaks:
-            self.set_break(brk["fn"], brk["lno"], False, brk["cond"], brk["fun"])
-
-        log.info("Server breakpoints added")
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                self.send("ServerBreaks")
+                breaks = self.receive()
+                if breaks == "Quit":
+                    raise ConnectionError("Server closed connection")
+                breaks = loads(breaks) if breaks else []
+                for brk in breaks:
+                    self.set_break(brk["fn"], brk["lno"], False, brk["cond"], brk["fun"])
+                return
+            except (ConnectionError, JSONDecodeError) as e:
+                if attempt == max_retries - 1:
+                    log.error("Failed to get breakpoints after retries")
+                    breaks = []
+                self.reconnect()
+                time.sleep(0.5)
 
     def index_imports(self):
         if not importmagic or self._importmagic_index:
@@ -299,11 +286,11 @@ class Wdb:
         self._importmagic_index_lock.acquire()
 
         def index(self):
-            log.info("Indexing imports")
+            log.info("[WDB CLIENT4] Indexing imports")
             index = importmagic.SymbolIndex()
             index.build_index(sys.path)
             self._importmagic_index = index
-            log.info("Indexing imports done")
+            log.info("[WDB CLIENT5] Indexing imports done")
 
         index_thread = Thread(
             target=index, args=(self,), name="wdb_importmagic_build_index"
@@ -405,10 +392,10 @@ class Wdb:
     def trace_debug_dispatch(self, frame, event, arg):
         """Utility function to add debug to tracing"""
         trace_log.info(
-            "Frame:%s. Event: %s. Arg: %r" % (pretty_frame(frame), event, arg)
+            "[WDB CLIENT6] Frame:%s. Event: %s. Arg: %r" % (pretty_frame(frame), event, arg)
         )
         trace_log.debug(
-            "state %r breaks ? %s stops ? %s"
+            "[WDB CLIENT7] state %r breaks ? %s stops ? %s"
             % (
                 self.state,
                 self.breaks(frame, no_remove=True),
@@ -417,7 +404,7 @@ class Wdb:
         )
         if event == "return":
             trace_log.debug(
-                "Return: frame: %s, state: %s, state.f_back: %s"
+                "[WDB CLIENT8] Return: frame: %s, state: %s, state.f_back: %s"
                 % (
                     pretty_frame(frame),
                     pretty_frame(self.state.frame),
@@ -426,14 +413,14 @@ class Wdb:
             )
         if self.trace_dispatch(frame, event, arg):
             return self.trace_debug_dispatch
-        trace_log.debug("No trace %s" % pretty_frame(frame))
+        trace_log.debug("[WDB CLIENT9] No trace %s" % pretty_frame(frame))
 
     def start_trace(self, full=False, frame=None, below=0, under=None):
         """Start tracing from here"""
         if self.tracing:
             return
         self.reset()
-        log.info("Starting trace")
+        log.info("[WDB CLIENT10] Starting trace")
         frame = frame or sys._getframe().f_back
         # Setting trace without pausing
         self.set_trace(frame, break_=False)
@@ -446,7 +433,7 @@ class Wdb:
         """Break at current state"""
         # We are already tracing, do nothing
         trace_log.info(
-            "Setting trace %s (stepping %s) (current_trace: %s)"
+            "[WDB CLIENT11] Setting trace %s (stepping %s) (current_trace: %s)"
             % (
                 pretty_frame(frame or sys._getframe().f_back),
                 self.stepping,
@@ -475,7 +462,7 @@ class Wdb:
             del frame.f_trace
             frame = frame.f_back
         sys.settrace(None)
-        log.info("Stopping trace")
+        log.info("[WDB CLIENT12] Stopping trace")
 
     def set_until(self, frame, lineno=None):
         """Stop on the next line number."""
@@ -516,12 +503,12 @@ class Wdb:
     ):
         """Put a breakpoint for filename"""
         log.info(
-            "Setting break fn:%s lno:%s tmp:%s cond:%s fun:%s"
+            "[WDB CLIENT13] Setting break fn:%s lno:%s tmp:%s cond:%s fun:%s"
             % (filename, lineno, temporary, cond, funcname)
         )
         breakpoint = self.get_break(filename, lineno, temporary, cond, funcname)
         self.breakpoints.add(breakpoint)
-        log.info("Breakpoint %r added" % breakpoint)
+        log.info("[WDB CLIENT14] Breakpoint %r added" % breakpoint)
         return breakpoint
 
     def clear_break(
@@ -529,7 +516,7 @@ class Wdb:
     ):
         """Remove a breakpoint"""
         log.info(
-            "Removing break fn:%s lno:%s tmp:%s cond:%s fun:%s"
+            "[WDB CLIENT15] Removing break fn:%s lno:%s tmp:%s cond:%s fun:%s"
             % (filename, lineno, temporary, cond, funcname)
         )
 
@@ -541,10 +528,10 @@ class Wdb:
 
         try:
             self.breakpoints.remove(breakpoint)
-            log.info("Breakpoint %r removed" % breakpoint)
+            log.info("[WDB CLIENT16] Breakpoint %r removed" % breakpoint)
         except Exception as e:
             log.error(
-                f"Breakpoint {breakpoint!r} not removed: not found, Generated exception {e}",
+                f"[WDB CLIENT17] Breakpoint {breakpoint!r} not removed: not found, Generated exception {e}",
                 exc_info=True,
             )
 
@@ -838,58 +825,34 @@ class Wdb:
         return stack, frames, current
 
     def send(self, data):
-        """Envía datos como texto + salto de línea"""
+        """Send data through websocket"""
+        log.info(f"[WDB CLIENT18] Sending form send()__init__py:843 {data}")
         if not self._socket:
-            log.warning("No active socket")
+            log.warning("No connection")
             return
-        try:
-            self._socket.sendall(f"{data}\n".encode('utf-8'))
-        except (socket.error, BrokenPipeError) as e:
-            log.error(f"Send failed: {e}")
-            self._socket = None
-
-    # version con los multithreaded
-    # def send(self, data):
-    #     """Send data through websocket"""
-    #     log.info(f"[WDB CLIENT] Sending form send()__init__py:843 {data}")
-    #     if not self._socket:
-    #         log.warning("No connection")
-    #         return
-    #     log.info(f"[WDB CLIENT] sending bytes 2 {data.encode('utf-8')}")
-    #     self._socket.send_bytes(data.encode("utf-8"))
+        log.info(f"[WDB CLIENT19] sending bytes 2 {data.encode('utf-8')}")
+        self._socket.send_bytes(data.encode("utf-8"))
 
     def receive(self, timeout=None):
-        """Lee datos con buffer de 4096 bytes"""
+        """Receive data through websocket"""
+        log.info("Entering receive():845")
         if not self._socket:
-            return "Quit"
+            log.warning("No connection")
+            return
         try:
-            data = self._socket.recv(4096)
-            return data.decode('utf-8').strip() if data else "Quit"
-        except (socket.error, ConnectionResetError) as e:
-            log.error(f"Receive failed: {e}")
+            if timeout:
+                rv = self._socket.poll(timeout)
+                if not rv:
+                    log.info("Connection timeouted")
+                    return "Quit"
+
+            data = self._socket.recv_bytes(4096)
+            log.info(f"Receiving receive()__init__py:857 {data}")
+        except Exception as e:
+            log.error(f"Connection lost {e}", exc_info=True)
             return "Quit"
-
-    # version con los multithreaded
-    # def receive(self, timeout=None):
-    #     """Receive data through websocket"""
-    #     log.info("Entering receive():845")
-    #     if not self._socket:
-    #         log.warning("No connection")
-    #         return
-    #     try:
-    #         if timeout:
-    #             rv = self._socket.poll(timeout)
-    #             if not rv:
-    #                 log.info("Connection timeouted")
-    #                 return "Quit"
-
-    #         data = self._socket.recv_bytes(4096)
-    #         log.info(f"Receiving receive()__init__py:857 {data}")
-    #     except Exception as e:
-    #         log.error(f"Connection lost {e}", exc_info=True)
-    #         return "Quit"
-    #     log.info("Got %s" % data)
-    #     return data.decode("utf-8")
+        log.info("Got %s" % data)
+        return data.decode("utf-8")
 
     def open_browser(self, type_="debug"):
         if not self.connected:
