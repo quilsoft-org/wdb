@@ -4,7 +4,7 @@ LABEL org.opencontainers.image.authors="Jorge Obiols <jorge.obiols@gmail.com>" \
       org.opencontainers.image.description="Servidor WDB para depuración remota"
 
 ARG CACHEBUST=1
-ARG WDB_VERSION="3.3.1"
+ARG WDB_VERSION="3.3.2"
 
 RUN apt-get update && apt-get install -y git
 
