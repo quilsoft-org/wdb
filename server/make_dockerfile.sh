@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-sudo docker build \
-    --rm=true \
-    --build-arg GITHUB_TOKEN="" \
-    -t jobiols/wdb:3.3.2 ./
+sudo docker build --rm=true --no-cache -t jobiols/wdb:3.3.2 ./
 result=$?
 if [ "$result" -eq 0 ]; then
     sd push jobiols/wdb:3.3.2

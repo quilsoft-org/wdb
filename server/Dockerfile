@@ -1,7 +1,7 @@
-FROM python:3.13-slim
+FROM python:3.14-slim
 LABEL maintainer="Jorge Obiols <jorge.obiols@gmail.com>" \
       license="GPLv3" \
-      description="WDB server with Python 3.13 compatibility."
+      description="WDB server with Python 3.14 compatibility."
 
 ARG WDB_VERSION="3.3.2"
 
