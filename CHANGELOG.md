@@ -1,3 +1,7 @@
+# 3.3.2
+- Actualizar la imagen de wdb con python 3.14.0
+
+
 # 3.3.1
 - Actualizar la imagen de wdb con python 3.12.3
 - Actualizar todoas las librerias a su ultima version

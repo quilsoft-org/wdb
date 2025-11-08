@@ -1,12 +1,12 @@
-FROM python:3.12.3
-LABEL org.opencontainers.image.authors="Jorge Obiols <jorge.obiols@gmail.com>" \
-      org.opencontainers.image.version="3.3.1" \
-      org.opencontainers.image.description="Servidor WDB para depuración remota"
+FROM python:3.14-alpine
+LABEL maintainer="Jorge Obiols <jorge.obiols@gmail.com>" \
+      license="GPLv3" \
+      description="Fork of WDB with improvements and Python 3.13 compatibility. Based on the original project by Florian Mounier (Kozea)."
 
 ARG CACHEBUST=1
 ARG WDB_VERSION="3.3.2"
 
-RUN apt-get update && apt-get install -y git
+RUN apk update && apk add --no-cache git
 
 RUN git clone https://${GITHUB_TOKEN}@github.com/quilsoft-org/wdb.git /opt/wdb \
     && pip install /opt/wdb/client \
